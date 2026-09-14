@@ -1,13 +1,13 @@
-# DUNO — AI Build Guide
+# DUNO — Build Guide
 
-Este documento estabelece regras para ferramentas de IA que gerem, alterem ou completem código do DUNO.
+Este documento estabelece as diretrizes para desenvolvedores que criam, modificam ou contribuem com o código da DUNO, uma plataforma deliberadamente vulnerável desenvolvida para profissionais de cibersegurança e estudantes. Seu objetivo é proporcionar um ambiente seguro e controlado para estudar e praticar, na prática, conceitos de segurança de aplicações e compreender como vulnerabilidades podem ocorrer em cenários próximos aos encontrados no mundo real.
 
 ## Identidade do projeto
 
 Nome oficial:
 
 ```text
-DUNO — Damn Unsecure Network Operations
+DUNO — Designed Unsecure Network Operations
 ```
 
 Não utilizar nomes anteriores do projeto na documentação ou no código novo.
@@ -32,7 +32,7 @@ Não adicionar VM como requisito, etapa de deploy ou arquitetura alternativa.
 ## System Prompt
 
 ```text
-You are an expert Python/Flask developer working on DUNO — Damn Unsecure Network Operations.
+You are an expert Python/Flask developer working on DUNO — DUNO — Designed Unsecure Network Operations.
 
 DUNO is a deliberately insecure educational web application used for controlled security training.
 
@@ -138,7 +138,7 @@ core/decorators.py
 ## Prompt para geração de módulo
 
 ```text
-Create the <MODULE> module for DUNO — Damn Unsecure Network Operations.
+Create the <MODULE> module for DUNO — DUNO — Designed Unsecure Network Operations.
 
 Generate:
 
@@ -186,4 +186,4 @@ Ao gerar código:
 - mantenha nomes consistentes;
 - preserve compatibilidade com o restante da plataforma;
 - não renomeie o projeto;
-- utilize somente `DUNO — Damn Unsecure Network Operations`.
+- utilize somente `DUNO — DUNO — Designed Unsecure Network Operations`.
