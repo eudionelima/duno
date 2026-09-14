@@ -60,7 +60,7 @@ Laboratório controlado para:
 Verificação executada:
 
 ```powershell
-Get-ChildItem -LiteralPath "C:\Users\jhone\Downloads\duno" -Recurse -Force
+Get-ChildItem -LiteralPath "C:\Users\dione\Downloads\duno" -Recurse -Force
 ```
 
 Resultado — **12 arquivos/diretórios no total, nenhum código-fonte executável**:
