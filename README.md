@@ -1,4 +1,4 @@
-# DUNO — Damn Unsecure Network Operations
+# DUNO — Designed Unsecure Network Operations
 
 Plataforma web deliberadamente vulnerável para treinamento prático de segurança de aplicações web e APIs.
 
