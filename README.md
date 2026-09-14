@@ -222,7 +222,7 @@ duno/
 - [Módulos](docs/MODULES.md)
 - [Níveis de Segurança](docs/SECURITY_LEVELS.md)
 - [Banco de Dados](docs/DATABASE.md)
-- [Guia para IA](docs/AI_BUILD_GUIDE.md)
+- [Guia para Desenvolvedores](docs/BUILD_GUIDE.md)
 - [Roadmap](docs/ROADMAP.md)
 - [Segurança e Uso Responsável](docs/SECURITY.md)
 
