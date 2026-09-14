@@ -1,10 +1,8 @@
 # PLANO FINAL — DUNO
 
 > **Arquivo mestre de implementação — DUNO — Designed Unsecure Network Operations**
-> Data da análise: 2026-09-14
-> Diretório analisado: `C:\Users\jhone\Downloads\duno` (`duno/`)
 > Estado encontrado: **somente especificação (docs + README + LICENSE). Nenhum código implementado.**
-> Regra: outra IA/desenvolvedor deve conseguir executar todas as etapas seguintes lendo **somente este arquivo + o código futuro do projeto**.
+> Regra: outro Desenvolvedor deve conseguir executar todas as etapas seguintes lendo **somente este arquivo + o código futuro do projeto**.
 
 ---
 
@@ -32,7 +30,7 @@
 20. Testes
 21. Critérios de conclusão do projeto
 22. Ordem recomendada de execução
-23. Regras para a próxima IA
+23. Regras para a Próximo DESENVOLVEDOR
 
 ---
 
@@ -93,9 +91,9 @@ duno/
 
 Ou seja: **o projeto está em estágio 100% especificação, 0% implementação**. Toda a arquitetura, rotas, tabelas, fluxos e padrões descritos nos `docs/` são **intenção documentada, não código verificado**. Não há divergência código-vs-doc porque não há código; há apenas **lacuna total entre especificação e implementação**.
 
-### 1.4. Implicação para a próxima IA
+### 1.4. Implicação para o próximo Desenvolvedor
 
-A próxima IA **não fará manutenção incremental**. Ela fará **construção greenfield guiada pela especificação**. Este plano, portanto, detalha:
+O próximo DESENVOLVEDOR **não fará manutenção incremental**. Ela fará **construção greenfield guiada pela especificação**. Este plano, portanto, detalha:
 
 - o que a especificação exige (extraído dos 9 docs);
 - o que está ausente e precisa ser criado arquivo a arquivo;
@@ -147,7 +145,7 @@ cryptography==44.0.0   # módulo crypto (didático)
 gunicorn==23.0.0       # opcional, execução no container
 ```
 
-> Não instalar agora. A próxima IA criará `requirements.txt` e validará via `docker-compose up --build`.
+> O próximo DESENVOLVEDOR criará `requirements.txt` e validará via `docker-compose up --build`.
 
 ---
 
@@ -247,9 +245,9 @@ duno/
 
 Nada mais. Sem diretórios ocultos, sem código.
 
-### 4.2. Estrutura alvo (a ser criada pela próxima IA — normativa)
+### 4.2. Estrutura alvo (a ser criadO pelO próximo DESENVOLVEDOR — normativa)
 
-Baseada em `README.md § Estrutura do repositório` + `ARCHITECTURE.md §4` + `DEVELOPMENT.md` + `BUILD_GUIDE.md`, consolidada e completada aqui (a próxima IA deve seguir exatamente esta árvore; desvios precisam justificativa):
+Baseada em `README.md § Estrutura do repositório` + `ARCHITECTURE.md §4` + `DEVELOPMENT.md` + `BUILD_GUIDE.md`, consolidada e completada aqui (a Próximo DESENVOLVEDOR deve seguir exatamente esta árvore; desvios precisam justificativa):
 
 ```text
 duno/
@@ -330,7 +328,7 @@ Responsabilidades (conforme `DEVELOPMENT.md`):
 - `core/auth.py`: login lab (`admin/password` seed), hash `werkzeug.security`, sessão Flask, `logout`, helper `current_user()`.
 - `core/decorators.py`: `@login_required`, opcional `@admin_required` para `auth_bypass` lab.
 - `core/source_loader.py`: `get_source(module, level)` com whitelist de módulos/níveis, `importlib.import_module(f"modules.{module}.source.{level}")` + `inspect.getsource()`. Nunca `open()` com path cru do usuário (evita LFI no próprio View Source).
-- `core/reset.py`: apaga/reinsere dados voláteis (`guestbook`, `captcha_challenges`, `secrets` demo, etc.) sem apagar `users`/`security_levels`? Ou full re-seed? Decisão documentada na Seção 16 — a próxima IA deve implementar e documentar o comportamento escolhido.
+- `core/reset.py`: apaga/reinsere dados voláteis (`guestbook`, `captcha_challenges`, `secrets` demo, etc.) sem apagar `users`/`security_levels`? Ou full re-seed? Decisão documentada na Seção 16 — a Próximo DESENVOLVEDOR deve implementar e documentar o comportamento escolhido.
 - `seed.py`: DDL das 7 tabelas + inserts (admin, secrets demo, tokens demo, captcha demo). Idempotente (`IF NOT EXISTS`, `INSERT OR IGNORE`).
 - `config.py`: `SECRET_KEY=os.getenv(...)`, `DATABASE=/app/data/duno.db`, `UPLOAD_FOLDER`, `MAX_CONTENT_LENGTH`, `PREFERRED_URL_SCHEME`. Sem segredos hardcoded além do fallback lab.
 - `templates/base.html`: nav (Dashboard, Login/Logout, Reset button, nível global?), blocos `{% block content %}`, inclusão de `duno.css`, `duno.js`, `view_source.js`, modal partial.
@@ -477,7 +475,7 @@ if __name__ == "__main__":
 | GET/POST | `/mass_assignment` | `modules/mass_assignment/routes.py` | Lab 19 | login |
 | ANY | `/api/*` | `modules/api_security/routes.py` | Lab 20 (JSON, JWT, IDOR, rate) | token/JWT |
 
-Detalhes de cada lab (comportamento didático esperado por nível — inferido de DVWA + `SECURITY_LEVELS.md`; a próxima IA deve implementar e documentar no template de cada módulo):
+Detalhes de cada lab (comportamento didático esperado por nível — inferido de DVWA + `SECURITY_LEVELS.md`; a Próximo DESENVOLVEDOR deve implementar e documentar no template de cada módulo):
 
 - **Brute Force**: low sem lockout/rate; medium com `sleep(2)`/tentativa + mensagem genérica; high com CAPTCHA/token + lockout após N; impossible com rate limit + audit_log + bloqueio + CSRF token.
 - **Command Injection**: low `os.popen("ping "+ip)` direto; medium blacklist `;|&&` bypassável com `| `; high regex mais forte mas bypass com encoding; impossible allowlist IP + `subprocess.run([...], shell=False)` + validação `ipaddress`.
@@ -575,7 +573,7 @@ Sem ORM. "Models" = DDL em `seed.py` + helpers em `core/database.py`. Tabelas: `
 ### 7.1. Estado atual
 
 - **Arquivo inexistente**. Nenhum `.db`, nenhum `seed.py`, nenhum DDL executado.
-- Especificação completa em `docs/DATABASE.md` (7 tabelas). DDL abaixo é transcrição fiel da doc — a próxima IA deve usar como base, com melhorias da §7.5.
+- Especificação completa em `docs/DATABASE.md` (7 tabelas). DDL abaixo é transcrição fiel da doc — a Próximo DESENVOLVEDOR deve usar como base, com melhorias da §7.5.
 
 ### 7.2. Tabelas, campos, tipos, chaves (conforme doc)
 
@@ -675,7 +673,7 @@ CREATE TABLE IF NOT EXISTS audit_log (
 
 ### 7.5. Problemas no modelo atual + solução futura (sem implementar agora)
 
-| # | Problema | Impacto | Solução futura (próxima IA) |
+| # | Problema | Impacto | Solução futura (Próximo DESENVOLVEDOR) |
 |---|---|---|---|
 | DB-1 | Sem `seed.py`, sem DDL executável | Nada funciona | Criar `seed.py` com DDL acima + seeds + guards idempotentes |
 | DB-2 | FK ausente em `api_tokens.user_id`, `audit_log.user_id` | Órfãos, reset inconsistente | Adicionar `FOREIGN KEY ... REFERENCES users(id) ON DELETE CASCADE` |
@@ -684,7 +682,7 @@ CREATE TABLE IF NOT EXISTS audit_log (
 | DB-5 | `guestbook`/`secrets` sem `user_id` | Sem rastreabilidade, reset apaga tudo | Aceitável para lab; documentar que reset é global, não por usuário |
 | DB-6 | Sem estratégia de migração | Alterar schema quebra `duno.db` existente no volume | `seed.py` com `PRAGMA user_version` + função `migrate()` incremental; reset recria; documentar `rm data/duno.db` como último recurso |
 | DB-7 | `TIMESTAMP DEFAULT CURRENT_TIMESTAMP` sem timezone | Logs com hora local do container | Aceitável; documentar UTC; usar `DATETIME DEFAULT (strftime(...))` se necessário |
-| DB-8 | Sem senha seed documentada além de `admin/password` | Próxima IA pode semear senhas fracas diferentes | Fixar seeds: `admin/password` (admin), `user/password` (user), `test/test` opcional; hash com `generate_password_hash` |
+| DB-8 | Sem senha seed documentada além de `admin/password` | Próximo DESENVOLVEDOR pode semear senhas fracas diferentes | Fixar seeds: `admin/password` (admin), `user/password` (user), `test/test` opcional; hash com `generate_password_hash` |
 
 ---
 
@@ -748,7 +746,7 @@ Convenções: Jinja2 `{{ result|safe }}` **somente** nos labs XSS low (intencion
 **`Dockerfile`** (a criar):
 
 ```dockerfile
-# Especificação normativa — próxima IA implementa e testa
+# Especificação normativa — Próximo DESENVOLVEDOR implementa e testa
 FROM python:3.11-slim
 WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -807,7 +805,7 @@ exec python run.py
 - **Persistência SQLite**: arquivo `data/duno.db` no host; nunca commitar o `.db`.
 - **Inicialização**: build → entrypoint banner → seed condicional → Flask. Logs devem exibir URL, módulos, níveis, tecnologia (exigência `DEPLOYMENT.md`).
 
-### 9.3. Problemas e melhorias necessárias (para a próxima IA)
+### 9.3. Problemas e melhorias necessárias (para a Próximo DESENVOLVEDOR)
 
 | # | Problema | Severidade | Ação futura |
 |---|---|---|---|
@@ -829,10 +827,10 @@ exec python run.py
 | `README.md` | 239 | Visão, stack, 20 módulos+rotas, endpoints globais, árvore, porta 2300, volume, links docs | **Correta e canônica**. Referência principal. Sem código, mas consistente |
 | `docs/ARCHITECTURE.md` | 218 | Monolito, core 6 arquivos, padrão Blueprint+source/, View Source via importlib/inspect, templates/static, porta | **Correta**. Base arquitetural a seguir à risca |
 | `docs/DATABASE.md` | 150 | 7 tabelas com DDL, persistência, seed/reset | **Correta mas incompleta**: sem índices, sem FK completas, sem seeds concretos, sem migração |
-| `docs/MODULES.md` | 106 | Catálogo 20 módulos, rotas, estrutura, fluxo, JWT/IDOR/rate no API | **Correta, superficial**: sem comportamento por nível; próxima IA deve detalhar por módulo |
+| `docs/MODULES.md` | 106 | Catálogo 20 módulos, rotas, estrutura, fluxo, JWT/IDOR/rate no API | **Correta, superficial**: sem comportamento por nível; Próximo DESENVOLVEDOR deve detalhar por módulo |
 | `docs/DEPLOYMENT.md` | 164 | Docker-only, comandos, entrypoint, troubleshooting, isolamento | **Correta**. Falta `.env`, healthcheck, uploads |
 | `docs/DEVELOPMENT.md` | 160 | Padrão módulo, rotas esperadas, frontend Vanilla, Prism CDN, checklist 18 itens | **Correta e acionável**. Checklist deve virar DoD por módulo |
-| `docs/BUILD_GUIDE.md` | 189 | Identidade, stack, system prompt, prompt de geração de módulo, política de arquivos | **Correta**. Contém prompts prontos para a próxima IA reutilizar |
+| `docs/BUILD_GUIDE.md` | 189 | Identidade, stack, system prompt, prompt de geração de módulo, política de arquivos | **Correta**. Contém prompts prontos para a Próximo DESENVOLVEDOR reutilizar |
 | `docs/ROADMAP.md` | 135 | Fases 0–9, 20 dias estimados | **Correta como plano**, mas fases 5/6 sobrepõem API Versioning/Mass Assignment (ver contradição) |
 | `docs/SECURITY.md` | 84 | Natureza vulnerável, Docker-only, porta, uploads, reset, uso responsável | **Correta**. Deve ser preservada e exibida no dashboard |
 | `docs/SECURITY_LEVELS.md` | 121 | Semântica low/medium/high/impossible, persistência, endpoints | **Correta**. Exemplos conceituais (prepared+falha sessão) devem guiar high |
@@ -855,7 +853,7 @@ Toda a documentação de intenção (arquitetura, rotas, tabelas, níveis, deplo
 3. **`FINAL_PLAN.md` vs `PLANO_FINAL.md`**: a tarefa pede `FINAL_PLAN.md` no objetivo e `PLANO_FINAL.md` no corpo. **Resolução**: este arquivo é `FINAL_PLAN.md` (nome do objetivo); mencionar o alias no cabeçalho.
 4. **Swagger UI**: ROADMAP Fase 6 cita Swagger UI sem stack definida (sem `flask-swagger-ui` no stack). **Resolução**: implementar `/api/docs` como página estática documentando endpoints (sem dependência nova) ou adicionar `flask-swagger-ui` com decisão explícita.
 
-### 10.5. O que precisa ser atualizado (pela próxima IA, não agora)
+### 10.5. O que precisa ser atualizado (pela Próximo DESENVOLVEDOR, não agora)
 
 - Atualizar `README.md` somente se rotas/portas/volume mudarem (não devem).
 - Criar `docs/API.md` (contrato `/api/*`), `docs/TESTING.md` (como validar), `CHANGELOG.md` (opcional).
@@ -875,7 +873,7 @@ Toda a documentação de intenção (arquitetura, rotas, tabelas, níveis, deplo
 
 - **Nada** se qualifica como parcial — não há código incompleto, TODO, placeholder ou stub. Verificação por `Get-ChildItem -Recurse` confirma ausência total. (Não há código duplicado ou complexo — não há código.)
 
-### 11.3. Não implementado (tudo — lista exaustiva para a próxima IA)
+### 11.3. Não implementado (tudo — lista exaustiva para a Próximo DESENVOLVEDOR)
 
 - Fundação: `Dockerfile`, `docker-compose.yml`, `entrypoint.sh`, `requirements.txt`, `.dockerignore`, `.gitignore`, `.env.example`, `data/.gitkeep`.
 - Núcleo Python: `run.py`, `config.py`, `seed.py`, `app.py`, `core/__init__.py`, `core/database.py`, `core/security_levels.py`, `core/reset.py`, `core/source_loader.py`, `core/auth.py`, `core/decorators.py`.
@@ -890,7 +888,7 @@ Toda a documentação de intenção (arquitetura, rotas, tabelas, níveis, deplo
 
 1. **Ausência total de implementação** — o projeto não executa, não responde, não persiste. Qualquer comando `docker-compose up` falha (arquivos inexistentes).
 2. **Sem validação possível hoje** — não há como testar rotas, níveis, View Source, reset, Docker, segurança.
-3. **Lacunas de especificação** (detalhes que a próxima IA terá que decidir e documentar): comportamento exato de auth/reset, contrato JSON da API, JWT secrets, rate limit, Swagger, uploads persistentes, migração de schema.
+3. **Lacunas de especificação** (detalhes que a Próximo DESENVOLVEDOR terá que decidir e documentar): comportamento exato de auth/reset, contrato JSON da API, JWT secrets, rate limit, Swagger, uploads persistentes, migração de schema.
 4. **Risco de divergência futura View Source vs. lógica** — mitigado pelo padrão `logic` importa `source` (Seção 4.3).
 5. **Risco de ambiente Windows/CRLF** para `entrypoint.sh`.
 6. **Nenhum controle de segredos/`.gitignore`** — risco de commitar `duno.db` ou `.env` quando criados.
@@ -932,7 +930,7 @@ Cada módulo `low` deve ser explorável conforme OWASP Top 10 / API Top 10. Isso
 
 ### 12.3. Nota sobre testes de segurança
 
-A próxima IA validará exploração **somente contra `http://localhost:2300` local** (próprio container). Nenhum teste contra terceiros. Cada lab deve ter PoC manual documentada (ex.: `' OR '1'='1`, `<script>alert(1)</script>`, `;id`, `../../etc/passwd`, JWT `none`) restrita ao ambiente lab.
+A Próximo DESENVOLVEDOR validará exploração **somente contra `http://localhost:2300` local** (próprio container). Nenhum teste contra terceiros. Cada lab deve ter PoC manual documentada (ex.: `' OR '1'='1`, `<script>alert(1)</script>`, `;id`, `../../etc/passwd`, JWT `none`) restrita ao ambiente lab.
 
 ---
 
@@ -961,7 +959,7 @@ A próxima IA validará exploração **somente contra `http://localhost:2300` lo
 
 ## 14. Plano de implementação futuro
 
-> **Não implementar agora.** Cada tarefa abaixo é para a próxima IA. Campos obrigatórios por tarefa: ID, prioridade, arquivos, objetivo, alteração, como implementar, dependências, impacto, critérios de conclusão, como testar.
+> **Não implementar agora.** Cada tarefa abaixo é para a Próximo DESENVOLVEDOR. Campos obrigatórios por tarefa: ID, prioridade, arquivos, objetivo, alteração, como implementar, dependências, impacto, critérios de conclusão, como testar.
 
 ### FASE 0 — Fundação Docker + esqueleto (pré-requisito de tudo)
 
@@ -1131,7 +1129,7 @@ Demais: **T-031 command_injection, T-032 csrf, T-033 file_inclusion, T-034 file_
 
 ## 15. Alterações por arquivo
 
-### 15.1. Criados (próxima IA — lista normativa completa)
+### 15.1. Criados (Próximo DESENVOLVEDOR — lista normativa completa)
 
 | Arquivo(s) | Motivo |
 |---|---|
@@ -1155,7 +1153,7 @@ Demais: **T-031 command_injection, T-032 csrf, T-033 file_inclusion, T-034 file_
 | `docs/API.md`, `docs/TESTING.md` | Contrato API + guia de validação |
 | `FINAL_PLAN.md` | Este arquivo (já criado nesta etapa; preservar) |
 
-### 15.2. Alterados (próxima IA)
+### 15.2. Alterados (Próximo DESENVOLVEDOR)
 
 | Arquivo | Motivo da alteração futura |
 |---|---|
@@ -1218,7 +1216,7 @@ PRAGMA synchronous = NORMAL;
 ### 16.5. Preservação de dados
 
 - Volume `./data:/app/data` é a única persistência. Antes de qualquer migração destrutiva: `cp data/duno.db data/duno.db.bak`.
-- `POST /reset` nunca apaga `users` nem `security_levels` (decisão normativa; se a próxima IA escolher full-wipe, deve documentar e justificar em `docs/DATABASE.md`).
+- `POST /reset` nunca apaga `users` nem `security_levels` (decisão normativa; se a Próximo DESENVOLVEDOR escolher full-wipe, deve documentar e justificar em `docs/DATABASE.md`).
 - Nunca commitar `*.db` ou `*.bak`.
 
 ---
@@ -1290,7 +1288,7 @@ PRAGMA synchronous = NORMAL;
 
 ## 20. Testes
 
-> Nenhum teste executado nesta etapa (nada para testar). Abaixo, o protocolo que a próxima IA deve seguir. Nenhum teste toca sistemas externos; tudo contra `http://localhost:2300` local.
+> Nenhum teste executado nesta etapa (nada para testar). Abaixo, o protocolo que a Próximo DESENVOLVEDOR deve seguir. Nenhum teste toca sistemas externos; tudo contra `http://localhost:2300` local.
 
 ### 20.1. Testes funcionais (manuais, por módulo — repetir para os 20)
 
@@ -1399,7 +1397,7 @@ Estimativa: ROADMAP original previa 20 dias focados para este escopo; com discip
 
 ---
 
-## 23. Regras para a próxima IA
+## 23. Regras para a Próximo DESENVOLVEDOR
 
 1. **Não quebrar o que funciona.** Quando algo existir e passar nos testes §20, não refatorar por gosto. Mudança só com motivo registrado.
 2. **Preservar a arquitetura definida.** Monolito Flask + Blueprints + `core/` 6 arquivos + `source/` 4 níveis + templates/static + SQLite + Docker único. Desvio (ex. SQLAlchemy, Postgres, React) exige justificativa explícita e atualização dos docs — padrão: não desviar.
@@ -1422,4 +1420,4 @@ Estimativa: ROADMAP original previa 20 dias focados para este escopo; com discip
 
 ---
 
-*Fim do PLANO FINAL — DUNO (`FINAL_PLAN.md`). Próxima IA: começar por T-001 na ordem §22, validando cada passo em Docker conforme §20.*
+*Fim do PLANO FINAL — DUNO (`FINAL_PLAN.md`). Próximo DESENVOLVEDOR: começar por T-001 na ordem §22, validando cada passo em Docker conforme §20.*
