@@ -1,0 +1,4 @@
+Sobre o DUNO — Designed Unsecure Network Operations
+
+Plataforma deliberadamente vulnerável para treinamento de segurança web.
+Desenvolvida para fins educacionais em ambiente controlado.

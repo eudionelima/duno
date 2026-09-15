@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}File Upload{% endblock %}
+
+{% block content %}
+<div class="module-page">
+  <div class="breadcrumb">
+    <a href="{{ url_for('index') }}">Dashboard</a>
+    <span class="breadcrumb-sep">›</span>
+    <span>#5 File Upload</span>
+  </div>
+
+  <div class="module-header">
+    <div class="module-title-row">
+      <h1 class="module-title">File Upload</h1>
+      <p class="module-desc">Upload inseguro — envie arquivos arbitrários ao servidor</p>
+    </div>
+    <div class="module-controls">
+      {% set current_level = level %}
+      {% include '_level_switch.html' with context %}
+      <button class="btn btn-ghost btn-sm" onclick="openSourceModal('file_upload', '{{ level }}')">
+        &lt;/&gt; View Source
+      </button>
+    </div>
+  </div>
+
+  {% include "_academy_callout.html" with context %}
+
+  <div class="module-body">
+    <div class="panel">
+      <div class="panel-title">Laboratório — <span class="level-badge level-{{ level }}">{{ level }}</span></div>
+      <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:1rem">
+        <strong style="color:var(--text-primary)">Objetivo:</strong>
+        Faça upload de um arquivo <code>.php</code> ou webshell. Em low, qualquer arquivo é aceito.
+      </p>
+      <form method="POST" action="/file_upload" enctype="multipart/form-data" id="upload-form">
+        <div class="form-group">
+          <label for="file-input">Arquivo</label>
+          <input type="file" id="file-input" name="file" class="form-control" />
+        </div>
+        <button type="submit" class="btn btn-primary">Enviar</button>
+      </form>
+      {% if result %}
+      <div class="result-box {% if 'salvo' in result or 'segurança' in result %}success{% else %}error{% endif %}">{{ result }}</div>
+      {% endif %}
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Como funciona</div>
+      <div class="alert alert-{% if level == 'impossible' %}success{% elif level == 'high' %}warning{% else %}error{% endif %}">
+        {% if level == 'low' %}Qualquer arquivo aceito — envie <code>shell.php</code>{% endif %}
+        {% if level == 'medium' %}Valida <code>Content-Type</code> — altere via Burp para <code>image/jpeg</code>{% endif %}
+        {% if level == 'high' %}Valida extensão + Content-Type — bypassável com <code>shell.php.jpg</code>{% endif %}
+        {% if level == 'impossible' %}PIL valida magic bytes + recomprime + UUID — webshell impossível{% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

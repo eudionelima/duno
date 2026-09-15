@@ -1,0 +1,13 @@
+<!-- _level_switch.html — T-021 seletor de nível por módulo -->
+<div class="level-switcher" id="level-switcher-{{ module }}">
+  <span class="level-switcher-label">Nível:</span>
+  <form method="POST" action="{{ url_for('set_security_level', module=module) }}" class="inline-form" id="level-form-{{ module }}">
+    {% for lvl in ['low', 'medium', 'high', 'impossible'] %}
+    <button type="submit" name="level" value="{{ lvl }}"
+            class="level-btn {% if current_level == lvl %}active{% endif %} level-{{ lvl }}"
+            id="level-btn-{{ module }}-{{ lvl }}">
+      {{ lvl }}
+    </button>
+    {% endfor %}
+  </form>
+</div>

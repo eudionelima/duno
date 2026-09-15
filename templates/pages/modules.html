@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+{% block title %}Catálogo de Módulos{% endblock %}
+
+{% block content %}
+<div class="page-container">
+  <!-- Breadcrumb -->
+  <nav class="breadcrumb" aria-label="Navegação">
+    <a href="{{ url_for('index') }}">Dashboard</a>
+    <span class="breadcrumb-sep">›</span>
+    <span>Catálogo de Módulos</span>
+  </nav>
+
+  <!-- Page Header -->
+  <header class="page-header">
+    <div class="hero-pill-badge">
+      <span class="hero-pill-dot"></span>
+      <span>Catálogo Completo • 20 Vulnerabilidades Mapeadas</span>
+    </div>
+    <h1 class="page-title">Catálogo de Módulos DUNO</h1>
+    <p class="page-desc">
+      Visão abrangente e técnica de todos os 20 laboratórios de segurança ofensiva e defensiva.
+      Cada módulo oferece 4 implementações graduais de código-fonte (Low a Impossible) com análise ao vivo.
+    </p>
+
+    <!-- Summary Stats Bar -->
+    <div class="stats-pills-row">
+      <div class="stat-pill">
+        <span class="stat-num">20</span>
+        <span class="stat-label">Módulos Práticos</span>
+      </div>
+      <div class="stat-pill">
+        <span class="stat-num">80</span>
+        <span class="stat-label">Implementações de Código</span>
+      </div>
+      <div class="stat-pill">
+        <span class="stat-num">4</span>
+        <span class="stat-label">Níveis de Proteção</span>
+      </div>
+      <div class="stat-pill">
+        <span class="stat-num">100%</span>
+        <span class="stat-label">OWASP Top 10 Aligned</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Filter & Search Bar -->
+  <div class="catalog-controls">
+    <div class="command-search-bar" style="max-width: 400px;">
+      <svg class="command-search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+      <input type="text" id="catalog-search" class="command-input" placeholder="Filtrar catálogo (ex: SQL, XSS, BOLA, JWT)..." />
+    </div>
+
+    <div class="hero-filters" id="catalog-filters" style="margin-top:0;">
+      <button class="filter-pill active" data-cat="all">Todos (20)</button>
+      <button class="filter-pill" data-cat="injection">Injeção & DB (5)</button>
+      <button class="filter-pill" data-cat="auth">Autenticação (4)</button>
+      <button class="filter-pill" data-cat="client">Client-Side (5)</button>
+      <button class="filter-pill" data-cat="access">Acesso & Cripto (3)</button>
+      <button class="filter-pill" data-cat="api">APIs REST (3)</button>
+    </div>
+  </div>
+
+  <!-- Detailed Catalog Table / Cards -->
+  <div class="catalog-list" id="catalog-list">
+
+    {% set catalog = [
+      ("01", "Brute Force", "brute_force", "auth", "Autenticação", "A07:2021-Auth Failures", "CWE-307", "Quebra de credenciais via dicionário e força bruta contra endpoints de login sem controle de taxa.", "admin, password, rate-limit, dictionary"),
+      ("02", "Command Injection", "command_injection", "injection", "Injeção de Comandos", "A03:2021-Injection", "CWE-78", "Execução arbitrária de comandos no host através de parâmetros passados sem sanitização ao shell do SO.", "ping, rce, bash, whoami, pipe"),
+      ("03", "CSRF", "csrf", "client", "Client-Side", "A01:2021-Broken Access Control", "CWE-352", "Falsificação de requisições cross-site explorando autenticação automática baseada em cookies do navegador.", "referer, samesite, token, forgery"),
+      ("04", "File Inclusion", "file_inclusion", "injection", "Injeção / Traversal", "A01:2021-Broken Access Control", "CWE-98", "Inclusão dinâmica de arquivos locais (LFI) contornando restrições de caminho via ../ (Path Traversal).", "lfi, traversal, etc/passwd, null-byte"),
+      ("05", "File Upload", "file_upload", "injection", "Upload Inseguro", "A03:2021-Injection", "CWE-434", "Upload de arquivos executáveis contornando validações superficiais de extensão ou cabeçalho Content-Type.", "webshell, php, mime-type, bypass"),
+      ("06", "Insecure CAPTCHA", "captcha", "auth", "Bypass Lógico", "A07:2021-Auth Failures", "CWE-804", "Bypass de mecanismo CAPTCHA explorando validação baseada em flags enviadas pelo próprio usuário.", "bot, bypass, parameter-tampering"),
+      ("07", "SQL Injection", "sqli", "injection", "Banco de Dados", "A03:2021-Injection", "CWE-89", "Extração e manipulação de consultas SQL em banco SQLite através de operadores booleanos, UNION e comentários.", "union, select, or 1=1, schema, sqlite"),
+      ("08", "SQL Injection (Blind)", "sqli_blind", "injection", "Banco de Dados", "A03:2021-Injection", "CWE-89", "Extração de dados caractere por caractere em consultas que não retornam erros nem registros diretamente.", "time-based, boolean-based, substr, delay"),
+      ("09", "Weak Session IDs", "weak_session", "auth", "Sessão & Cookies", "A07:2021-Auth Failures", "CWE-384", "Sessões com identificadores sequenciais ou previsíveis gerados sem entropia criptográfica.", "session-fixation, cookie-tamper, predictable"),
+      ("10", "XSS (DOM)", "xss_dom", "client", "Cross-Site Scripting", "A03:2021-Injection", "CWE-79", "Execução de scripts maliciosos injetados e processados diretamente no Document Object Model pelo JavaScript.", "innerhtml, sink, source, location.hash"),
+      ("11", "XSS (Reflected)", "xss_reflected", "client", "Cross-Site Scripting", "A03:2021-Injection", "CWE-79", "Injeção de payloads JavaScript em parâmetros de requisição refletidos sem encoding no corpo da resposta HTTP.", "alert, script, payload, query-string"),
+      ("12", "XSS (Stored)", "xss_stored", "client", "Cross-Site Scripting", "A03:2021-Injection", "CWE-79", "Persistência de código malicioso no banco de dados, executado no navegador de todos os usuários visitantes.", "guestbook, persistent, stored, database"),
+      ("13", "CSP Bypass", "csp_bypass", "client", "Políticas Web", "A05:2021-Security Misconfig", "CWE-1021", "Evasão de Content Security Policy permissiva utilizando endpoints JSONP legítimos ou scripts inline inseguros.", "csp, jsonp, nonce, unsafe-inline"),
+      ("14", "JavaScript Attacks", "js_attacks", "client", "Client-side Logic", "A04:2021-Insecure Design", "CWE-602", "Manipulação de cálculos, hashes e regras de negócio implementadas exclusivamente no navegador.", "client-side, tamper, md5, devtools"),
+      ("15", "Authorisation Bypass", "auth_bypass", "access", "Controle de Acesso", "A01:2021-Broken Access Control", "CWE-285", "Acesso indevido a páginas e recursos administrativos restritos contornando verificações de papel.", "admin, role, privilege-escalation, 403"),
+      ("16", "Open HTTP Redirect", "open_redirect", "access", "Redirecionamento", "A01:2021-Broken Access Control", "CWE-601", "Desvio de usuários para sites externos não confiáveis através de parâmetros de redirecionamento desprotegidos.", "phishing, redirect, url, domain-bypass"),
+      ("17", "Cryptography", "crypto", "access", "Criptografia", "A02:2021-Cryptographic Failures", "CWE-327", "Quebra de senhas e dados confidenciais armazenados com algoritmos obsoletos ou cifras reversíveis.", "md5, rot13, base64, hash, rainbow"),
+      ("18", "API Versioning", "api_versioning", "api", "API Security", "A05:2021-Security Misconfig", "CWE-1059", "Exploração de endpoints antigos e legados (/v1) mantidos ativos sem os patches de segurança da versão atual.", "v1, v2, deprecation, unpatched"),
+      ("19", "Mass Assignment", "mass_assignment", "api", "API Security", "A08:2021-Software Integrity", "CWE-915", "Sobrescrita de propriedades sensíveis injetando parâmetros adicionais não previstos em payloads JSON.", "json, is_admin, role, bind, overwrite"),
+      ("20", "API Security", "api_security", "api", "API Security", "A01:2021-Broken Access Control", "CWE-639", "Broken Object Level Authorization (BOLA/IDOR) em endpoints REST sem validação de propriedade do recurso.", "bola, idor, rest, user_id, token")
+    ] %}
+
+    {% for num, name, slug, cat, cat_label, owasp, cwe, desc, tags in catalog %}
+    {% set lvl = module_level(slug) %}
+    <div class="catalog-item" data-cat="{{ cat }}" data-search="{{ (name + ' ' + num + ' ' + desc + ' ' + tags + ' ' + owasp + ' ' + cwe) | lower }}">
+      <div class="catalog-item-header">
+        <div class="catalog-item-title-group">
+          <span class="catalog-num">#{{ num }}</span>
+          <h2 class="catalog-item-title">{{ name }}</h2>
+          <span class="catalog-cat-badge">{{ cat_label }}</span>
+        </div>
+        <div class="catalog-item-meta">
+          <span class="catalog-owasp-pill">{{ owasp }}</span>
+          <span class="catalog-cwe-pill">{{ cwe }}</span>
+        </div>
+      </div>
+
+      <p class="catalog-item-desc">{{ desc }}</p>
+
+      <div class="catalog-item-footer">
+        <div class="catalog-levels-track">
+          <span class="levels-track-label">Nível Ativo:</span>
+          <span class="level-badge level-{{ lvl }}">
+            <span class="level-dot"></span>
+            {{ lvl }}
+          </span>
+          <span class="levels-all-indicator">4 Níveis: Low • Medium • High • Impossible</span>
+        </div>
+
+        <div class="catalog-actions">
+          <button type="button" class="btn btn-outline btn-sm" onclick="openSourceModal('{{ slug }}', '{{ lvl }}')">
+            &lt;/&gt; Source
+          </button>
+          <a href="{{ url_for(slug + '.index') }}" class="btn btn-primary btn-sm">
+            Acessar Lab →
+          </a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // Filtro e Busca dinâmicos no Catálogo
+  document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('catalog-search');
+    const filterButtons = document.querySelectorAll('#catalog-filters .filter-pill');
+    const items = document.querySelectorAll('.catalog-item');
+
+    let currentCat = 'all';
+    let searchQuery = '';
+
+    function filterCatalog() {
+      items.forEach(item => {
+        const itemCat = item.getAttribute('data-cat');
+        const itemSearch = item.getAttribute('data-search') || '';
+
+        const matchCat = (currentCat === 'all' || itemCat === currentCat);
+        const matchSearch = (!searchQuery || itemSearch.includes(searchQuery));
+
+        if (matchCat && matchSearch) {
+          item.style.display = 'block';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+    }
+
+    filterButtons.forEach(btn => {
+      btn.addEventListener('click', function() {
+        filterButtons.forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        currentCat = this.getAttribute('data-cat');
+        filterCatalog();
+      });
+    });
+
+    if (searchInput) {
+      searchInput.addEventListener('input', function() {
+        searchQuery = this.value.trim().toLowerCase();
+        filterCatalog();
+      });
+    }
+  });
+</script>
+{% endblock %}

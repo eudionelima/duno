@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}CSRF{% endblock %}
+
+{% block content %}
+<div class="module-page">
+  <div class="breadcrumb">
+    <a href="{{ url_for('index') }}">Dashboard</a>
+    <span class="breadcrumb-sep">›</span>
+    <span>#3 CSRF</span>
+  </div>
+
+  <div class="module-header">
+    <div class="module-title-row">
+      <h1 class="module-title">CSRF</h1>
+      <p class="module-desc">Cross-Site Request Forgery — requisição forjada entre sites</p>
+    </div>
+    <div class="module-controls">
+      {% set current_level = level %}
+      {% include '_level_switch.html' with context %}
+      <button class="btn btn-ghost btn-sm" onclick="openSourceModal('csrf', '{{ level }}')">
+        &lt;/&gt; View Source
+      </button>
+    </div>
+  </div>
+
+  {% include "_academy_callout.html" with context %}
+
+  <div class="module-body">
+    <div class="panel">
+      <div class="panel-title">Laboratório — <span class="level-badge level-{{ level }}">{{ level }}</span></div>
+      <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:1rem">
+        <strong style="color:var(--text-primary)">Objetivo:</strong>
+        Altere o nome de usuário sem o conhecimento da vítima. Forje uma requisição POST para <code>/csrf</code>.
+      </p>
+      <form method="POST" action="/csrf" id="csrf-form">
+        <div class="form-group">
+          <label for="new-email">Novo username</label>
+          <input type="text" id="new-email" name="new_email" class="form-control" placeholder="novo_nome" />
+        </div>
+        {% if level in ('high', 'impossible') %}
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+        {% endif %}
+        <button type="submit" class="btn btn-primary">Alterar</button>
+      </form>
+      {% if result %}
+      <div class="result-box {% if 'inválido' in result or 'ausente' in result %}error{% else %}success{% endif %}">{{ result }}</div>
+      {% endif %}
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Como funciona</div>
+      <div class="alert alert-{% if level == 'impossible' %}success{% elif level == 'high' %}warning{% else %}error{% endif %}">
+        {% if level == 'low' %}Sem token CSRF — qualquer site pode POST para <code>/csrf</code> com o cookie da vítima{% endif %}
+        {% if level == 'medium' %}Verifica Referer — bypassável: Referer ausente ou com <code>localhost</code> na URL de origem{% endif %}
+        {% if level == 'high' %}Token CSRF fixo por sessão — automatização ainda possível com extração do token{% endif %}
+        {% if level == 'impossible' %}Token one-time gerado por form — reuso impossível{% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

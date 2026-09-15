@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}XSS (DOM){% endblock %}
+
+{% block content %}
+<div class="module-page">
+  <div class="breadcrumb">
+    <a href="{{ url_for('index') }}">Dashboard</a>
+    <span class="breadcrumb-sep">›</span>
+    <span>#10 XSS (DOM)</span>
+  </div>
+
+  <div class="module-header">
+    <div class="module-title-row">
+      <h1 class="module-title">XSS (DOM)</h1>
+      <p class="module-desc">Cross-Site Scripting via manipulação do DOM</p>
+    </div>
+    <div class="module-controls">
+      {% set current_level = level %}
+      {% include '_level_switch.html' with context %}
+      <button class="btn btn-ghost btn-sm" onclick="openSourceModal('xss_dom', '{{ level }}')">
+        &lt;/&gt; View Source
+      </button>
+    </div>
+  </div>
+
+  {% include "_academy_callout.html" with context %}
+
+  <div class="module-body">
+    <div class="panel">
+      <div class="panel-title">Laboratório — <span class="level-badge level-{{ level }}">{{ level }}</span></div>
+      <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:1rem">
+        <strong style="color:var(--text-primary)">Objetivo:</strong>
+        Execute JavaScript injetando no parâmetro name. Tente <code>&lt;img src=x onerror=alert(1)&gt;</code>
+      </p>
+      <form method="POST" action="/xss_dom" id="dom-form">
+        <div class="form-group">
+          <label for="dom-name">Nome</label>
+          <input type="text" id="dom-name" name="name" class="form-control" placeholder="<img src=x onerror=alert(1)>" />
+        </div>
+        <button type="submit" class="btn btn-primary">Enviar</button>
+      </form>
+      {% if result is not none %}
+      <div style="margin-top:1rem">
+        <p style="font-size:0.8rem;color:var(--text-muted)">Output (DOM):</p>
+        {% if level == 'impossible' %}
+        <div class="result-box">Olá, {{ result }}!</div>
+        {% else %}
+        <div id="dom-output" class="result-box"></div>
+        <script>
+          document.getElementById('dom-output').innerHTML = {{ result | tojson }};
+        </script>
+        {% endif %}
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Como funciona</div>
+      <div class="alert alert-{% if level == 'impossible' %}success{% elif level == 'high' %}warning{% else %}error{% endif %}">
+        {% if level == 'low' %}innerHTML sem sanitização — qualquer HTML/JS é executado{% endif %}
+        {% if level == 'medium' %}Remove &lt;script&gt; — bypassável com &lt;img onerror=...&gt;{% endif %}
+        {% if level == 'high' %}Regex mais abrangente — bypassável com SVG ou outros vetores{% endif %}
+        {% if level == 'impossible' %}textContent em vez de innerHTML — XSS via DOM impossível{% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

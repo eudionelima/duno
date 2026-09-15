@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}File Inclusion{% endblock %}
+
+{% block content %}
+<div class="module-page">
+  <div class="breadcrumb">
+    <a href="{{ url_for('index') }}">Dashboard</a>
+    <span class="breadcrumb-sep">›</span>
+    <span>#4 File Inclusion</span>
+  </div>
+
+  <div class="module-header">
+    <div class="module-title-row">
+      <h1 class="module-title">File Inclusion</h1>
+      <p class="module-desc">Leitura de arquivos via parâmetro — Local File Inclusion</p>
+    </div>
+    <div class="module-controls">
+      {% set current_level = level %}
+      {% include '_level_switch.html' with context %}
+      <button class="btn btn-ghost btn-sm" onclick="openSourceModal('file_inclusion', '{{ level }}')">
+        &lt;/&gt; View Source
+      </button>
+    </div>
+  </div>
+
+  {% include "_academy_callout.html" with context %}
+
+  <div class="module-body">
+    <div class="panel">
+      <div class="panel-title">Laboratório — <span class="level-badge level-{{ level }}">{{ level }}</span></div>
+      <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:1rem">
+        <strong style="color:var(--text-primary)">Objetivo:</strong>
+        Leia <code>/etc/passwd</code>. Tente <code>?page=../../../etc/passwd</code>
+      </p>
+      <form method="GET" action="/file_inclusion" id="fi-form">
+        <div class="form-group">
+          <label for="page-input">Arquivo</label>
+          <input type="text" id="page-input" name="page" class="form-control"
+                 placeholder="about.txt" value="{{ page }}" />
+        </div>
+        <button type="submit" class="btn btn-primary">Carregar</button>
+      </form>
+      {% if result is not none %}
+      <div class="result-box raw" style="margin-top:1rem"><pre>{{ result }}</pre></div>
+      {% endif %}
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Como funciona</div>
+      <div class="alert alert-{% if level == 'impossible' %}success{% elif level == 'high' %}warning{% else %}error{% endif %}">
+        {% if level == 'low' %}Path concatenado diretamente — <code>../../../etc/passwd</code> funciona{% endif %}
+        {% if level == 'medium' %}Bloqueia <code>../</code> — bypassável com URL encoding <code>%2e%2e/</code>{% endif %}
+        {% if level == 'high' %}Whitelist de nomes — symlinks podem contornar{% endif %}
+        {% if level == 'impossible' %}Whitelist + <code>os.path.realpath</code> — path traversal impossível{% endif %}
+      </div>
+      <div style="margin-top:0.75rem;font-size:0.82rem;color:var(--text-muted)">Arquivos disponíveis: <code>about.txt</code>, <code>help.txt</code>, <code>info.txt</code></div>
+    </div>
+  </div>
+</div>
+{% endblock %}

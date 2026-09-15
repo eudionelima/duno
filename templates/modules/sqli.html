@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}SQL Injection{% endblock %}
+
+{% block content %}
+<div class="module-page">
+  <div class="breadcrumb">
+    <a href="{{ url_for('index') }}">Dashboard</a>
+    <span class="breadcrumb-sep">›</span>
+    <span>#7 SQL Injection</span>
+  </div>
+
+  <div class="module-header">
+    <div class="module-title-row">
+      <h1 class="module-title">SQL Injection</h1>
+      <p class="module-desc">Manipulação de consultas SQL via entrada controlada</p>
+    </div>
+    <div class="module-controls">
+      {% set current_level = level %}
+      {% include '_level_switch.html' with context %}
+      <button class="btn btn-ghost btn-sm" onclick="openSourceModal('sqli', '{{ level }}')">
+        &lt;/&gt; View Source
+      </button>
+    </div>
+  </div>
+
+  {% include "_academy_callout.html" with context %}
+
+  <div class="module-body">
+    <div class="panel">
+      <div class="panel-title">Laboratório — <span class="level-badge level-{{ level }}">{{ level }}</span></div>
+      <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:1rem">
+        <strong style="color:var(--text-primary)">Objetivo:</strong>
+        Extraia todos os usuários. Tente <code>1 OR 1=1--</code> ou <code>1 UNION SELECT 1,username,password_hash FROM users--</code>
+      </p>
+      <form method="POST" action="/sqli" id="sqli-form">
+        <div class="form-group">
+          <label for="user-id">User ID</label>
+          <input type="text" id="user-id" name="user_id" class="form-control" placeholder="1" />
+        </div>
+        <button type="submit" class="btn btn-primary">Buscar</button>
+      </form>
+      {% if rows %}
+      <div style="margin-top:1rem;overflow-x:auto">
+        <table class="data-table">
+          <thead><tr><th>ID</th><th>Username</th><th>Role</th><th>Extra</th></tr></thead>
+          <tbody>
+            {% for row in rows %}
+            <tr>
+              <td>{{ row.get('id','') }}</td>
+              <td>{{ row.get('username', row.get('error','')) }}</td>
+              <td>{{ row.get('role','') }}</td>
+              <td>{{ row.get('password_hash', row.get('error',''))[:40] if row.get('password_hash') else '' }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Como funciona</div>
+      <div class="alert alert-{% if level == 'impossible' %}success{% elif level == 'high' %}warning{% else %}error{% endif %}">
+        {% if level == 'low' %}Concatenação direta: <code>WHERE id = {input}</code> — UNION, OR 1=1, comentários todos funcionam{% endif %}
+        {% if level == 'medium' %}Blacklist de palavras — bypassável com <code>UNION/**/SELECT</code> ou variação de case{% endif %}
+        {% if level == 'high' %}Prepared statement + cast para int — SQLi impossível, mas apenas IDs inteiros funcionam{% endif %}
+        {% if level == 'impossible' %}Prepared statement + validação estrita de tipo positivo — completamente seguro{% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

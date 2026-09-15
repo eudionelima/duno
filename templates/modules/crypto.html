@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Cryptography{% endblock %}
+
+{% block content %}
+<div class="module-page">
+  <div class="breadcrumb">
+    <a href="{{ url_for('index') }}">Dashboard</a>
+    <span class="breadcrumb-sep">›</span>
+    <span>#17 Cryptography</span>
+  </div>
+
+  <div class="module-header">
+    <div class="module-title-row">
+      <h1 class="module-title">Cryptography</h1>
+      <p class="module-desc">Dados considerados protegidos — estude as fraquezas de cada abordagem</p>
+    </div>
+    <div class="module-controls">
+      {% set current_level = level %}
+      {% include '_level_switch.html' with context %}
+      <button class="btn btn-ghost btn-sm" onclick="openSourceModal('crypto', '{{ level }}')">
+        &lt;/&gt; View Source
+      </button>
+    </div>
+  </div>
+
+  {% include "_academy_callout.html" with context %}
+
+  <div class="module-body">
+    <div class="panel">
+      <div class="panel-title">Laboratório — <span class="level-badge level-{{ level }}">{{ level }}</span></div>
+      <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:1rem">
+        <strong style="color:var(--text-primary)">Objetivo:</strong>
+        Recupere o valor de <code>flag</code>. Analise o esquema criptográfico de cada nível.
+      </p>
+      <form method="POST" action="/crypto" id="crypto-form">
+        <div class="form-group">
+          <label for="crypto-key">Chave (secret key)</label>
+          <select id="crypto-key" name="key" class="form-control">
+            <option value="flag">flag</option>
+            <option value="admin_password">admin_password</option>
+            <option value="api_key">api_key</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Decodificar</button>
+      </form>
+      {% if result %}
+      <div class="result-box info" style="margin-top:1rem;font-family:monospace">{{ result }}</div>
+      {% endif %}
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Como funciona</div>
+      <div class="alert alert-{% if level == 'impossible' %}success{% elif level == 'high' %}warning{% else %}error{% endif %}">
+        {% if level == 'low' %}Base64 — encoding, não criptografia. Decodifique com qualquer ferramenta{% endif %}
+        {% if level == 'medium' %}XOR com chave fixa (42) — reversível com a mesma operação{% endif %}
+        {% if level == 'high' %}MD5 sem salt — vulnerável a rainbow tables{% endif %}
+        {% if level == 'impossible' %}pbkdf2:sha256 com salt aleatório — não reversível{% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

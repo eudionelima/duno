@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}CSP Bypass{% endblock %}
+
+{% block content %}
+<div class="module-page">
+  <div class="breadcrumb">
+    <a href="{{ url_for('index') }}">Dashboard</a>
+    <span class="breadcrumb-sep">›</span>
+    <span>#13 CSP Bypass</span>
+  </div>
+
+  <div class="module-header">
+    <div class="module-title-row">
+      <h1 class="module-title">CSP Bypass</h1>
+      <p class="module-desc">Bypass de Content Security Policy</p>
+    </div>
+    <div class="module-controls">
+      {% set current_level = level %}
+      {% include '_level_switch.html' with context %}
+      <button class="btn btn-ghost btn-sm" onclick="openSourceModal('csp_bypass', '{{ level }}')">
+        &lt;/&gt; View Source
+      </button>
+    </div>
+  </div>
+
+  {% include "_academy_callout.html" with context %}
+
+  <div class="module-body">
+    <div class="panel">
+      <div class="panel-title">Laboratório — <span class="level-badge level-{{ level }}">{{ level }}</span></div>
+      <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:1rem">
+        <strong style="color:var(--text-primary)">Objetivo:</strong>
+        Execute JavaScript apesar do CSP. Em medium, use inline handlers. Em high, explore JSONP no CDN.
+      </p>
+      <form method="POST" action="/csp_bypass" id="csp-form">
+        <div class="form-group">
+          <label for="csp-name">Payload</label>
+          <input type="text" id="csp-name" name="name" class="form-control"
+                 placeholder="<img src=x onerror=alert(1)>" />
+        </div>
+        <button type="submit" class="btn btn-primary">Testar</button>
+      </form>
+      {% if result is not none %}
+      <div class="result-box" style="margin-top:1rem">
+        {% if level == 'impossible' %}
+        {{ result }}
+        {% else %}
+        {{ result | safe }}
+        {% endif %}
+      </div>
+      {% endif %}
+      <div style="margin-top:1rem;font-size:0.8rem;color:var(--text-muted)">
+        CSP atual: <code>{{ csp_header or "nenhum" }}</code>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Como funciona</div>
+      <div class="alert alert-{% if level == 'impossible' %}success{% elif level == 'high' %}warning{% else %}error{% endif %}">
+        {% if level == 'low' %}Sem CSP — scripts externos e inline livres{% endif %}
+        {% if level == 'medium' %}CSP com 'unsafe-inline' — XSS inline ainda possível{% endif %}
+        {% if level == 'high' %}CSP com CDN sem hash/nonce — JSONP endpoint no CDN pode ser explorado{% endif %}
+        {% if level == 'impossible' %}CSP com nonce por requisição sem unsafe-inline — execução de JS não autorizada impossível{% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

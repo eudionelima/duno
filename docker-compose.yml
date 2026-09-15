@@ -1,0 +1,17 @@
+services:
+  duno-app:
+    build: .
+    container_name: duno-app
+    ports:
+      - "2300:2300"
+    volumes:
+      - ./templates:/app/templates
+      - ./static:/app/static
+      - ./core:/app/core
+      - ./modules:/app/modules
+      - ./app:/app/app
+      - ./data:/app/data
+      - ./static/uploads:/app/static/uploads
+    env_file:
+      - .env
+    restart: unless-stopped

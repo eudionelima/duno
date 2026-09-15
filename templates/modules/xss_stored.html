@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}XSS (Stored){% endblock %}
+
+{% block content %}
+<div class="module-page">
+  <div class="breadcrumb">
+    <a href="{{ url_for('index') }}">Dashboard</a>
+    <span class="breadcrumb-sep">›</span>
+    <span>#12 XSS (Stored)</span>
+  </div>
+
+  <div class="module-header">
+    <div class="module-title-row">
+      <h1 class="module-title">XSS (Stored)</h1>
+      <p class="module-desc">XSS persistido no guestbook</p>
+    </div>
+    <div class="module-controls">
+      {% set current_level = level %}
+      {% include '_level_switch.html' with context %}
+      <button class="btn btn-ghost btn-sm" onclick="openSourceModal('xss_stored', '{{ level }}')">
+        &lt;/&gt; View Source
+      </button>
+    </div>
+  </div>
+
+  {% include "_academy_callout.html" with context %}
+
+  <div class="module-body">
+    <div class="panel">
+      <div class="panel-title">Guestbook — <span class="level-badge level-{{ level }}">{{ level }}</span></div>
+      <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:1rem">
+        <strong style="color:var(--text-primary)">Objetivo:</strong>
+        Injete XSS que persiste para todos os visitantes. Tente <code>&lt;script&gt;alert(document.cookie)&lt;/script&gt;</code>
+      </p>
+      <form method="POST" action="/xss_stored" id="guestbook-form">
+        <div class="form-group">
+          <label for="gb-name">Nome</label>
+          <input type="text" id="gb-name" name="name" class="form-control" placeholder="Seu nome" />
+        </div>
+        <div class="form-group">
+          <label for="gb-msg">Mensagem</label>
+          <textarea id="gb-msg" name="message" class="form-control" rows="3" placeholder="Sua mensagem..."></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Postar</button>
+      </form>
+
+      <div style="margin-top:1.5rem">
+        <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.75rem">Entradas do guestbook:</p>
+        {% if entries %}
+        <table class="data-table">
+          <thead><tr><th>#</th><th>Nome</th><th>Mensagem</th></tr></thead>
+          <tbody>
+            {% for entry in entries %}
+            <tr>
+              <td>{{ entry.id }}</td>
+              <td>{{ entry.name }}</td>
+              <td>{{ entry.message }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% else %}
+        <p style="color:var(--text-muted);font-size:0.85rem">Sem entradas ainda.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Como funciona</div>
+      <div class="alert alert-{% if level == 'impossible' %}success{% elif level == 'high' %}warning{% else %}error{% endif %}">
+        {% if level == 'low' %}Salva raw + renderiza com Markup() — XSS executado para todos os visitantes{% endif %}
+        {% if level == 'medium' %}Remove &lt;script&gt; mas renderiza raw — bypassável com eventos HTML5{% endif %}
+        {% if level == 'high' %}Escapa na gravação mas renderiza com Markup() — escape revertido na saída{% endif %}
+        {% if level == 'impossible' %}Salva raw + Jinja2 autoescaping na saída — injeção impossível{% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,247 @@
+{% extends "base.html" %}
+{% block title %}LAB CONTROL — DUNO{% endblock %}
+
+{% block content %}
+<div class="settings-page-wrapper">
+  <div class="settings-container">
+
+    <!-- Top Breadcrumb / Kicker -->
+    <div class="settings-kicker-brand">DUNO // LABORATORY CONTROL</div>
+
+    <!-- Hero Header -->
+    <header class="settings-hero">
+      <h1 class="settings-title">LAB CONTROL</h1>
+      <p class="settings-subtitle">Configure and inspect your DUNO laboratory environment.</p>
+    </header>
+
+    <div class="settings-divider"></div>
+
+    <!-- SECTION 1: ACCOUNT -->
+    <section class="settings-section" id="section-account">
+      <div class="settings-section-header">
+        <h2 class="settings-section-title">ACCOUNT</h2>
+      </div>
+
+      <div class="settings-section-content">
+        <div class="settings-account-card">
+          <div class="settings-account-badge">{{ user.role|upper if user else 'ADMIN' }}</div>
+          <div class="settings-account-role">Operador de Laboratório</div>
+          <div class="settings-account-username"><code>{{ user.username if user else 'admin' }}</code></div>
+        </div>
+
+        <div class="settings-kv-grid">
+          <div class="settings-kv-row">
+            <span class="settings-kv-label">Username</span>
+            <span class="settings-kv-value font-mono">{{ user.username if user else 'admin' }}</span>
+          </div>
+          <div class="settings-kv-row">
+            <span class="settings-kv-label">Role</span>
+            <span class="settings-kv-value">Laboratory Operator ({{ user.role if user else 'admin' }})</span>
+          </div>
+          <div class="settings-kv-row">
+            <span class="settings-kv-label">Access Scope</span>
+            <span class="settings-kv-value">Full Laboratory Control &amp; Source Inspection</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="settings-divider"></div>
+
+    <!-- SECTION 2: SYSTEM (Em vez de: Informações do sistema) -->
+    <section class="settings-section" id="section-system">
+      <div class="settings-section-header">
+        <h2 class="settings-section-title">SYSTEM</h2>
+      </div>
+
+      <div class="settings-section-content">
+        <div class="settings-kv-grid">
+          <div class="settings-kv-row">
+            <span class="settings-kv-label">Environment</span>
+            <span class="settings-kv-value">Local Laboratory</span>
+          </div>
+          <div class="settings-kv-row">
+            <span class="settings-kv-label">Status</span>
+            <span class="settings-kv-value status-running">
+              <span class="status-pulse-dot"></span> Running
+            </span>
+          </div>
+          <div class="settings-kv-row">
+            <span class="settings-kv-label">Database Engine</span>
+            <span class="settings-kv-value">SQLite 3</span>
+          </div>
+          <div class="settings-kv-row">
+            <span class="settings-kv-label">Application</span>
+            <span class="settings-kv-value">DUNO v2</span>
+          </div>
+        </div>
+
+        <!-- System Preferences: Default Security Level -->
+        <div class="settings-preference-group" style="margin-top: 2rem;">
+          <div class="settings-pref-info">
+            <h3 class="settings-pref-title">Default Security Level</h3>
+            <p class="settings-pref-desc">
+              Define o nível de proteção global para todos os 20 módulos do laboratório. Alterar este valor atualiza simultaneamente a dificuldade em toda a plataforma.
+            </p>
+          </div>
+
+          <!-- Level Switcher Buttons -->
+          <div class="settings-level-selector" role="group" aria-label="Default Security Level">
+            <form method="POST" action="{{ url_for('settings') }}" class="settings-level-form" id="settings-level-form">
+              <input type="hidden" name="action" value="set_level" />
+              <input type="hidden" name="level" id="input-selected-level" value="{{ current_default_level }}" />
+
+              {% for lvl in valid_levels %}
+              <button type="button" 
+                      class="btn-level-pill {% if current_default_level == lvl %}active{% endif %}" 
+                      data-level="{{ lvl }}"
+                      onclick="setLabDefaultLevel('{{ lvl }}')">
+                [ {{ lvl|upper }} ]
+              </button>
+              {% endfor %}
+            </form>
+          </div>
+
+          <div id="level-status-feedback" class="settings-feedback-message" style="display:none;">
+            ✓ Nível padrão atualizado para <strong id="feedback-level-name">{{ current_default_level|upper }}</strong> em todos os módulos.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="settings-divider"></div>
+
+    <!-- SECTION 3: DATABASE (Em vez de: Dados do laboratório) -->
+    <section class="settings-section" id="section-database">
+      <div class="settings-section-header">
+        <h2 class="settings-section-title">DATABASE</h2>
+      </div>
+
+      <div class="settings-section-content">
+        <div class="settings-kv-grid">
+          <div class="settings-kv-row">
+            <span class="settings-kv-label">Database File</span>
+            <span class="settings-kv-value font-mono">{{ db_filename }}</span>
+          </div>
+          <div class="settings-kv-row">
+            <span class="settings-kv-label">Allocated Size</span>
+            <span class="settings-kv-value font-mono">{{ db_size_formatted }}</span>
+          </div>
+          <div class="settings-kv-row">
+            <span class="settings-kv-label">Active Schema Tables</span>
+            <span class="settings-kv-value font-mono">{{ table_count }} tables</span>
+          </div>
+          <div class="settings-kv-row">
+            <span class="settings-kv-label">Last Reset</span>
+            <span class="settings-kv-value">{{ last_reset }}</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="settings-divider"></div>
+
+    <!-- SECTION 4: ACTIVITY (Em vez de: Histórico) -->
+    <section class="settings-section" id="section-activity">
+      <div class="settings-section-header">
+        <h2 class="settings-section-title">ACTIVITY</h2>
+      </div>
+
+      <div class="settings-section-content">
+        <div class="settings-activity-list">
+          {% for act in activities %}
+          <div class="settings-activity-item">
+            <div class="activity-left">
+              <span class="activity-bullet">▸</span>
+              <span class="activity-action">{{ act.action }}</span>
+            </div>
+            <div class="activity-meta">
+              <span class="activity-ip font-mono">{{ act.ip }}</span>
+              <span class="activity-ts">{{ act.ts }}</span>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+
+    <div class="settings-divider"></div>
+
+    <!-- SECTION 5: DANGER ZONE (Em vez de: Ações perigosas) -->
+    <section class="settings-section settings-danger-zone" id="section-danger">
+      <div class="settings-section-header">
+        <h2 class="settings-section-title danger-title">DANGER ZONE</h2>
+      </div>
+
+      <div class="settings-section-content">
+        <div class="settings-danger-card">
+          <div class="settings-danger-info">
+            <h3 class="settings-danger-heading">Reset all laboratory data</h3>
+            <p class="settings-danger-desc">
+              Restore the laboratory database to its initial state. Limpa payloads persistidos, sessões salvas e reestabelece os seeds originais.
+            </p>
+          </div>
+
+          <div class="settings-danger-action">
+            <button type="button" class="btn-danger-action" onclick="openResetConfirmModal()">
+              [ Reset Database ]
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  function setLabDefaultLevel(level) {
+    const input = document.getElementById('input-selected-level');
+    if (input) input.value = level;
+
+    // Atualiza classes ativas visualmente imediatamente
+    document.querySelectorAll('.btn-level-pill').forEach(btn => {
+      if (btn.getAttribute('data-level') === level) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+
+    // Envia requisição assíncrona
+    const formData = new FormData();
+    formData.append('action', 'set_level');
+    formData.append('level', level);
+
+    fetch("{{ url_for('settings') }}", {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest'
+      }
+    })
+    .then(res => res.json())
+    .then(data => {
+      const feedback = document.getElementById('level-status-feedback');
+      const lvlName = document.getElementById('feedback-level-name');
+      if (feedback && lvlName) {
+        lvlName.textContent = level.toUpperCase();
+        feedback.style.display = 'block';
+        setTimeout(() => {
+          feedback.style.opacity = '1';
+        }, 10);
+        setTimeout(() => {
+          feedback.style.display = 'none';
+        }, 4000);
+      }
+    })
+    .catch(err => {
+      // Fallback form submit
+      const form = document.getElementById('settings-level-form');
+      if (form) form.submit();
+    });
+  }
+</script>
+{% endblock %}

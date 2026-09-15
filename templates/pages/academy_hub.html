@@ -1,0 +1,742 @@
+{% extends "base.html" %}
+{% block title %}DUNO Academy — Security Knowledge & Defense{% endblock %}
+
+{% block content %}
+<div class="academy-hub-container">
+
+  <!-- Breadcrumb -->
+  <nav class="breadcrumb" aria-label="Navegação">
+    <a href="{{ url_for('index') }}">DUNO</a>
+    <span class="breadcrumb-sep">›</span>
+    <span>Academy</span>
+  </nav>
+
+  <!-- Editorial Hero Section -->
+  <section class="academy-hero">
+    <div class="academy-kicker">
+      <span class="academy-kicker-dot"></span>
+      <span>SECURITY KNOWLEDGE & DEFENSIVE CRAFT</span>
+    </div>
+    <h1 class="academy-headline">DUNO ACADEMY</h1>
+    <p class="academy-tagline">
+      Understand the vulnerability. Break the assumption. Build the defense.
+    </p>
+    <p class="academy-subtext">
+      Uma base de conhecimento técnica e didática que conecta a teoria à prática real.
+      Aprenda o conceito, analise o código-fonte, teste seus conhecimentos com quizzes interativos e explore a defesa em 20 cenários reais.
+    </p>
+    <div class="academy-hero-actions">
+      <a href="#curriculum" class="btn-academy-primary" id="btn-start-learning">
+        <span>START LEARNING</span>
+        <span class="btn-arrow">↓</span>
+      </a>
+      <a href="{{ url_for('index') }}" class="btn-academy-outline">
+        <span>PRATICAR NOS LABS →</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- Learning Progress Overview Card (LocalStorage Powered) -->
+  <section class="academy-progress-section">
+    <div class="academy-progress-card">
+      <div class="progress-card-left">
+        <div class="progress-badge">STUDENT PROGRESS</div>
+        <h3 class="progress-title">Seu Progresso na Academy</h3>
+        <p class="progress-desc">
+          Complete as lições e responda aos quizzes técnicos para desbloquear maestria conceitual.
+        </p>
+      </div>
+      <div class="progress-card-right">
+        <div class="progress-stat-row">
+          <span class="progress-stat-num" id="progress-percent">0%</span>
+          <span class="progress-stat-label"><span id="completed-count">0</span> de 20 lições concluídas</span>
+        </div>
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill" id="progress-bar-fill" style="width: 0%;"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Learning Paths Section -->
+  <section class="academy-paths-section">
+    <div class="section-header">
+      <div class="section-kicker">CURATED PATHS</div>
+      <h2 class="section-title">Trilhas de Aprendizado</h2>
+      <p class="section-desc">Caminhos estruturados para dominar as superfícies de ataque da web moderna.</p>
+    </div>
+
+    <div class="paths-grid">
+      {% for path in paths %}
+      <div class="path-card" data-path-id="{{ path.id }}">
+        <div class="path-card-top">
+          <span class="path-icon" aria-hidden="true">
+            {% if path.id == 'injection' %}
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+              <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+              <path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3"></path>
+              <path d="M11 17l2 2-2 2" stroke="var(--orange)" stroke-width="2"></path>
+            </svg>
+            {% elif path.id == 'auth' %}
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              <circle cx="12" cy="16" r="1.5" fill="currentColor"></circle>
+            </svg>
+            {% elif path.id == 'client' %}
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="3" width="20" height="18" rx="2.5"></rect>
+              <line x1="2" y1="9" x2="22" y2="9"></line>
+              <circle cx="5.5" cy="6" r="1" fill="currentColor"></circle>
+              <circle cx="9" cy="6" r="1" fill="currentColor"></circle>
+              <polyline points="7 14 9.5 16.5 7 19"></polyline>
+              <line x1="12" y1="19" x2="16" y2="19"></line>
+            </svg>
+            {% elif path.id == 'access' %}
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              <path d="M12 8v8"></path>
+              <path d="M9 12h6"></path>
+            </svg>
+            {% elif path.id == 'api' %}
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="18" cy="18" r="3"></circle>
+              <circle cx="6" cy="6" r="3"></circle>
+              <circle cx="18" cy="6" r="3"></circle>
+              <line x1="8.5" y1="7.5" x2="15.5" y2="16.5"></line>
+              <line x1="15.5" y1="6" x2="8.5" y2="6"></line>
+            </svg>
+            {% endif %}
+          </span>
+          <span class="path-kicker">{{ path.kicker }}</span>
+        </div>
+        <h3 class="path-title">{{ path.title }}</h3>
+        <p class="path-desc">{{ path.desc }}</p>
+        <div class="path-footer">
+          <span class="path-count">{{ path.modules_count }} Lições Técnicas</span>
+          <span class="path-arrow">→</span>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- Complete 20-Module Curriculum Grid -->
+  <section class="academy-curriculum-section" id="curriculum">
+    <div class="curriculum-header">
+      <div>
+        <div class="section-kicker">KNOWLEDGE REPOSITORY</div>
+        <h2 class="section-title">Grade Completa de Conteúdo</h2>
+        <p class="section-desc">20 capítulos pedagógicos dissecando causas, anatomia, código real e defesas.</p>
+      </div>
+
+      <!-- Controls: View Switcher & Live Search -->
+      <div class="curriculum-header-controls">
+        <div class="view-switcher-wrap">
+          <div class="view-switcher" role="group" aria-label="Modo de Visualização">
+            <button type="button" class="view-switch-btn active" id="btn-view-grid" title="Visualização em Grade">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+              <span>Grade</span>
+            </button>
+            <button type="button" class="view-switch-btn" id="btn-view-board" title="Quadro de Estudos Drag & Drop">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="4" height="18" rx="1"></rect><rect x="10" y="3" width="4" height="18" rx="1"></rect><rect x="16" y="3" width="4" height="18" rx="1"></rect></svg>
+              <span>Quadro de Estudos</span>
+              <span class="view-btn-beacon" id="view-btn-beacon" title="Novo: Quadro Interativo" aria-hidden="true"></span>
+            </button>
+          </div>
+
+          <!-- Sinalizador Guiado Interativo (Onboarding Tour Popover) -->
+          <div class="academy-onboarding-popover" id="academy-onboarding-popover" role="dialog" aria-modal="false" aria-labelledby="tour-title" style="display: none;">
+            <div class="popover-arrow"></div>
+            <div class="popover-header">
+              <div class="popover-badge">
+                <span class="radar-pulse-dot"></span>
+                <span>SINALIZADOR TÁTICO · GUIA</span>
+              </div>
+              <button type="button" class="popover-close-btn" id="btn-tour-close" aria-label="Fechar dica">×</button>
+            </div>
+            
+            <h4 class="popover-title" id="tour-title">Organize sua Rota com o Quadro de Estudos</h4>
+            <p class="popover-desc">Acompanhe seu domínio prático em cibersegurança de forma interativa:</p>
+            
+            <div class="popover-steps">
+              <div class="popover-step">
+                <span class="step-badge">01</span>
+                <div class="step-text">
+                  <strong>Modo Kanban:</strong> Alterne para o <em>Quadro de Estudos</em> para enxergar seus módulos por colunas de status.
+                </div>
+              </div>
+              <div class="popover-step">
+                <span class="step-badge">02</span>
+                <div class="step-text">
+                  <strong>Drag & Drop:</strong> Segure os cards pelo ícone <code class="tour-code-handle">⋮⋮</code> e mova entre <em>A Estudar</em>, <em>Em Progresso</em> e <em>Dominado</em>.
+                </div>
+              </div>
+              <div class="popover-step">
+                <span class="step-badge">03</span>
+                <div class="step-text">
+                  <strong>Evolução em Tempo Real:</strong> Cada módulo arrastado para <em>Dominado</em> atualiza a barra de progresso do aluno automaticamente.
+                </div>
+              </div>
+            </div>
+
+            <div class="popover-actions">
+              <button type="button" class="btn-popover-action" id="btn-tour-try-board">
+                <span>Testar Quadro Agora</span>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </button>
+              <button type="button" class="btn-popover-dismiss" id="btn-tour-dismiss">
+                Entendi, continuar na grade
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <button type="button" class="btn-tour-help" id="btn-reopen-tour" title="Como funciona o Quadro de Estudos">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+          <span>Dica do Quadro</span>
+        </button>
+
+        <div class="curriculum-search-box">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" id="academy-search-input" placeholder="Filtrar por conceito (ex: SQL, XSS, RCE, CSRF)..." autocomplete="off" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Category Filter Pills -->
+    <div class="curriculum-filters" id="academy-filters">
+      <button class="filter-pill active" data-filter="all">Todos (20)</button>
+      <button class="filter-pill" data-filter="injection">Injeção & DB (5)</button>
+      <button class="filter-pill" data-filter="auth">Autenticação & Sessão (4)</button>
+      <button class="filter-pill" data-filter="client">Client-Side & Browser (5)</button>
+      <button class="filter-pill" data-filter="access">Acesso & Cripto (3)</button>
+      <button class="filter-pill" data-filter="api">APIs & Lógica (3)</button>
+    </div>
+
+    <!-- Lessons Grid -->
+    <div class="curriculum-grid" id="curriculum-grid">
+      {% for item in curriculum %}
+      <div class="curriculum-card" 
+           draggable="true"
+           data-slug="{{ item.slug }}" 
+           data-path="{{ item.path_id }}" 
+           data-title="{{ item.title | lower }}" 
+           data-desc="{{ item.desc | lower }}">
+        <div class="curriculum-card-top">
+          <div class="card-num-wrap">
+            <span class="card-drag-handle" title="Arrastar módulo">⋮⋮</span>
+            <span class="curriculum-num">#{{ item.num }}</span>
+            <span class="curriculum-path-tag">{{ item.path_name }}</span>
+          </div>
+          <span class="curriculum-status-pill" id="status-{{ item.slug }}">○ PENDENTE</span>
+        </div>
+
+        <h3 class="curriculum-card-title">{{ item.title }}</h3>
+        <p class="curriculum-card-desc">{{ item.desc }}</p>
+
+        <div class="curriculum-card-meta">
+          <span class="meta-item">
+            <svg class="meta-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            {{ item.read_time }} de leitura
+          </span>
+          <span class="meta-item">
+            <svg class="meta-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="22" y1="12" x2="18" y2="12"></line>
+              <line x1="6" y1="12" x2="2" y2="12"></line>
+              <line x1="12" y1="6" x2="12" y2="2"></line>
+              <line x1="12" y1="22" x2="12" y2="18"></line>
+            </svg>
+            {{ item.difficulty }}
+          </span>
+        </div>
+
+        <div class="curriculum-card-actions">
+          <a href="{{ url_for('academy_lesson', slug=item.slug) }}" class="btn-read-lesson">
+            <span>LER CAPÍTULO COMPLETO</span>
+            <span class="arrow">→</span>
+          </a>
+          <a href="{{ url_for(item.slug + '.index') }}" class="btn-lab-shortcut" title="Ir direto para o laboratório prático">
+            LAB
+          </a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Interactive Kanban Board (Drag & Drop) -->
+    <div class="kanban-board" id="academy-kanban-board" style="display:none;">
+      <!-- Coluna 1: A Estudar -->
+      <div class="kanban-col" data-col="todo">
+        <div class="kanban-col-header">
+          <div class="col-title-wrap">
+            <span class="col-indicator todo"></span>
+            <h3 class="col-title">A ESTUDAR</h3>
+          </div>
+          <span class="col-count" id="count-todo">0</span>
+        </div>
+        <div class="kanban-dropzone" id="dropzone-todo" data-col="todo"></div>
+      </div>
+
+      <!-- Coluna 2: Em Progresso -->
+      <div class="kanban-col" data-col="in_progress">
+        <div class="kanban-col-header">
+          <div class="col-title-wrap">
+            <span class="col-indicator in-progress"></span>
+            <h3 class="col-title">EM PROGRESSO</h3>
+          </div>
+          <span class="col-count" id="count-in-progress">0</span>
+        </div>
+        <div class="kanban-dropzone" id="dropzone-in-progress" data-col="in_progress"></div>
+      </div>
+
+      <!-- Coluna 3: Dominado -->
+      <div class="kanban-col" data-col="done">
+        <div class="kanban-col-header">
+          <div class="col-title-wrap">
+            <span class="col-indicator done"></span>
+            <h3 class="col-title">DOMINADO (CONCLUÍDO)</h3>
+          </div>
+          <span class="col-count" id="count-done">0</span>
+        </div>
+        <div class="kanban-dropzone" id="dropzone-done" data-col="done"></div>
+      </div>
+    </div>
+  </section>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function() {
+  'use strict';
+
+  // 1. GESTÃO DE PROGRESSO LOCALSTORAGE
+  const STORAGE_KEY = 'duno_academy_progress';
+  const BOARD_STORAGE_KEY = 'duno_academy_board';
+  const VIEW_STORAGE_KEY = 'duno_academy_view';
+
+  function getProgress() {
+    try {
+      return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+    } catch(e) {
+      return {};
+    }
+  }
+
+  function setProgress(slug, isCompleted) {
+    const p = getProgress();
+    p[slug] = isCompleted;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(p));
+    updateProgressUI();
+  }
+
+  function getBoardState() {
+    try {
+      return JSON.parse(localStorage.getItem(BOARD_STORAGE_KEY)) || {};
+    } catch(e) {
+      return {};
+    }
+  }
+
+  function saveBoardState(state) {
+    localStorage.setItem(BOARD_STORAGE_KEY, JSON.stringify(state));
+  }
+
+  function updateProgressUI() {
+    const progress = getProgress();
+    const completedSlugs = Object.keys(progress).filter(k => progress[k] === true);
+    const count = completedSlugs.length;
+    const total = 20;
+    const percent = Math.round((count / total) * 100);
+
+    const percentEl = document.getElementById('progress-percent');
+    const countEl = document.getElementById('completed-count');
+    const barFill = document.getElementById('progress-bar-fill');
+
+    if (percentEl) percentEl.textContent = percent + '%';
+    if (countEl) countEl.textContent = count;
+    if (barFill) barFill.style.width = percent + '%';
+
+    // Atualiza pills de status nos cards da grade
+    document.querySelectorAll('.curriculum-card').forEach(card => {
+      const slug = card.getAttribute('data-slug');
+      const statusPill = document.getElementById('status-' + slug);
+      if (statusPill) {
+        if (progress[slug]) {
+          statusPill.textContent = '✓ CONCLUÍDO';
+          statusPill.classList.add('completed');
+          card.classList.add('card-completed');
+        } else {
+          statusPill.textContent = '○ PENDENTE';
+          statusPill.classList.remove('completed');
+          card.classList.remove('card-completed');
+        }
+      }
+    });
+
+    updateKanbanCounts();
+  }
+
+  // 2. FILTRAGEM E BUSCA DINÂMICA
+  const searchInput = document.getElementById('academy-search-input');
+  const filterButtons = document.querySelectorAll('.curriculum-filters .filter-pill');
+  const pathCards = document.querySelectorAll('.path-card');
+  const cards = Array.from(document.querySelectorAll('.curriculum-card'));
+
+  let activeCategory = 'all';
+  let searchQuery = '';
+
+  function filterCards() {
+    const q = searchQuery.toLowerCase().trim();
+
+    // Filtra cards da grade
+    cards.forEach(card => {
+      const cat = card.getAttribute('data-path');
+      const title = card.getAttribute('data-title');
+      const desc = card.getAttribute('data-desc');
+
+      const matchCat = (activeCategory === 'all' || cat === activeCategory);
+      const matchSearch = !q || title.includes(q) || desc.includes(q);
+
+      card.style.display = (matchCat && matchSearch) ? 'flex' : 'none';
+    });
+
+    // Filtra cards do Kanban
+    document.querySelectorAll('.kanban-card').forEach(kCard => {
+      const cat = kCard.getAttribute('data-path');
+      const title = kCard.getAttribute('data-title');
+      const desc = kCard.getAttribute('data-desc');
+
+      const matchCat = (activeCategory === 'all' || cat === activeCategory);
+      const matchSearch = !q || title.includes(q) || desc.includes(q);
+
+      kCard.style.display = (matchCat && matchSearch) ? 'block' : 'none';
+    });
+
+    updateKanbanCounts();
+  }
+
+  if (searchInput) {
+    searchInput.addEventListener('input', function() {
+      searchQuery = this.value;
+      filterCards();
+    });
+  }
+
+  filterButtons.forEach(btn => {
+    btn.addEventListener('click', function() {
+      filterButtons.forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+      activeCategory = this.getAttribute('data-filter');
+      filterCards();
+    });
+  });
+
+  pathCards.forEach(card => {
+    card.addEventListener('click', function() {
+      const pathId = this.getAttribute('data-path-id');
+      const targetBtn = document.querySelector('.curriculum-filters .filter-pill[data-filter="' + pathId + '"]');
+      if (targetBtn) {
+        targetBtn.click();
+        const el = document.getElementById('curriculum');
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+  });
+
+  // 3. ENGINE DO QUADRO KANBAN & DRAG AND DROP
+  const gridEl = document.getElementById('curriculum-grid');
+  const boardEl = document.getElementById('academy-kanban-board');
+  const btnViewGrid = document.getElementById('btn-view-grid');
+  const btnViewBoard = document.getElementById('btn-view-board');
+
+  const dropzones = {
+    todo: document.getElementById('dropzone-todo'),
+    in_progress: document.getElementById('dropzone-in-progress'),
+    done: document.getElementById('dropzone-done')
+  };
+
+  function updateKanbanCounts() {
+    ['todo', 'in_progress', 'done'].forEach(col => {
+      const colId = col === 'in_progress' ? 'count-in-progress' : 'count-' + col;
+      const countEl = document.getElementById(colId);
+      const dz = dropzones[col];
+      if (countEl && dz) {
+        const visibleCards = Array.from(dz.querySelectorAll('.kanban-card')).filter(c => c.style.display !== 'none');
+        countEl.textContent = visibleCards.length;
+      }
+    });
+  }
+
+  function initKanbanBoard() {
+    const boardState = getBoardState();
+    const progress = getProgress();
+
+    // Limpa dropzones
+    Object.values(dropzones).forEach(dz => { if (dz) dz.innerHTML = ''; });
+
+    cards.forEach(origCard => {
+      const slug = origCard.getAttribute('data-slug');
+      const num = origCard.querySelector('.curriculum-num')?.textContent || '';
+      const pathName = origCard.querySelector('.curriculum-path-tag')?.textContent || '';
+      const pathId = origCard.getAttribute('data-path');
+      const title = origCard.querySelector('.curriculum-card-title')?.textContent || '';
+      const desc = origCard.querySelector('.curriculum-card-desc')?.textContent || '';
+
+      // Determina coluna inicial
+      let targetCol = boardState[slug];
+      if (!targetCol) {
+        targetCol = progress[slug] ? 'done' : 'todo';
+      }
+
+      // Cria Kanban card
+      const kCard = document.createElement('div');
+      kCard.className = 'kanban-card';
+      kCard.draggable = true;
+      kCard.setAttribute('data-slug', slug);
+      kCard.setAttribute('data-path', pathId);
+      kCard.setAttribute('data-title', title.toLowerCase());
+      kCard.setAttribute('data-desc', desc.toLowerCase());
+
+      kCard.innerHTML = 
+        '<div class="kanban-card-top">' +
+          '<span class="curriculum-num">' + num + '</span>' +
+          '<span class="card-drag-handle" title="Arrastar para outra coluna">⋮⋮</span>' +
+        '</div>' +
+        '<h4 class="kanban-card-title">' + title + '</h4>' +
+        '<p class="kanban-card-desc">' + desc + '</p>' +
+        '<div class="kanban-card-footer">' +
+          '<span class="curriculum-path-tag">' + pathName + '</span>' +
+          '<a href="/academy/' + slug + '" class="kanban-card-link">Estudar →</a>' +
+        '</div>';
+
+      // Eventos de arrasto no Kanban card
+      kCard.addEventListener('dragstart', function(e) {
+        e.dataTransfer.setData('text/plain', slug);
+        e.dataTransfer.effectAllowed = 'move';
+        setTimeout(() => kCard.classList.add('dragging'), 0);
+      });
+
+      kCard.addEventListener('dragend', function() {
+        kCard.classList.remove('dragging');
+      });
+
+      const targetDz = dropzones[targetCol] || dropzones.todo;
+      if (targetDz) targetDz.appendChild(kCard);
+    });
+
+    // Dropzone listeners
+    Object.entries(dropzones).forEach(([colKey, dz]) => {
+      if (!dz) return;
+
+      dz.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        dz.classList.add('drag-over');
+      });
+
+      dz.addEventListener('dragleave', function() {
+        dz.classList.remove('drag-over');
+      });
+
+      dz.addEventListener('drop', function(e) {
+        e.preventDefault();
+        dz.classList.remove('drag-over');
+        const slug = e.dataTransfer.getData('text/plain');
+        if (!slug) return;
+
+        const kCard = document.querySelector('.kanban-card[data-slug="' + slug + '"]');
+        if (!kCard) return;
+
+        dz.appendChild(kCard);
+
+        // Salva estado do quadro
+        const state = getBoardState();
+        state[slug] = colKey;
+        saveBoardState(state);
+
+        // Atualiza progresso se movido para 'done'
+        if (colKey === 'done') {
+          setProgress(slug, true);
+        } else {
+          setProgress(slug, false);
+        }
+
+        updateProgressUI();
+      });
+    });
+
+    updateKanbanCounts();
+  }
+
+  // 4. ALTERNADOR DE VISUALIZAÇÃO (GRADE VS QUADRO KANBAN)
+  function setViewMode(mode) {
+    if (mode === 'board') {
+      if (gridEl) gridEl.style.display = 'none';
+      if (boardEl) boardEl.style.display = 'grid';
+      if (btnViewGrid) btnViewGrid.classList.remove('active');
+      if (btnViewBoard) btnViewBoard.classList.add('active');
+      localStorage.setItem(VIEW_STORAGE_KEY, 'board');
+    } else {
+      if (gridEl) gridEl.style.display = 'grid';
+      if (boardEl) boardEl.style.display = 'none';
+      if (btnViewGrid) btnViewGrid.classList.add('active');
+      if (btnViewBoard) btnViewBoard.classList.remove('active');
+      localStorage.setItem(VIEW_STORAGE_KEY, 'grid');
+    }
+  }
+
+  if (btnViewGrid) {
+    btnViewGrid.addEventListener('click', () => setViewMode('grid'));
+  }
+  if (btnViewBoard) {
+    btnViewBoard.addEventListener('click', () => setViewMode('board'));
+  }
+
+  // 5. REORDENAÇÃO ARRASTAR E SOLTAR NA GRADE (CUSTOM PLAYLIST)
+  cards.forEach(card => {
+    card.addEventListener('dragstart', function(e) {
+      e.dataTransfer.setData('text/plain', this.getAttribute('data-slug'));
+      e.dataTransfer.effectAllowed = 'move';
+      setTimeout(() => this.classList.add('dragging'), 0);
+    });
+
+    card.addEventListener('dragend', function() {
+      this.classList.remove('dragging');
+      document.querySelectorAll('.curriculum-card').forEach(c => c.classList.remove('drag-over'));
+    });
+
+    card.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      this.classList.add('drag-over');
+    });
+
+    card.addEventListener('dragleave', function() {
+      this.classList.remove('drag-over');
+    });
+
+    card.addEventListener('drop', function(e) {
+      e.preventDefault();
+      this.classList.remove('drag-over');
+      const draggedSlug = e.dataTransfer.getData('text/plain');
+      const draggedCard = document.querySelector('.curriculum-card[data-slug="' + draggedSlug + '"]');
+      if (draggedCard && draggedCard !== this && gridEl) {
+        gridEl.insertBefore(draggedCard, this);
+      }
+    });
+  });
+
+  // 6. SINALIZADOR GUIADO INTERATIVO (ONBOARDING BEACON & TOUR)
+  const TOUR_STORAGE_KEY = 'duno_academy_board_tour_seen';
+  const popoverEl = document.getElementById('academy-onboarding-popover');
+  const beaconEl = document.getElementById('view-btn-beacon');
+  const btnCloseTour = document.getElementById('btn-tour-close');
+  const btnDismissTour = document.getElementById('btn-tour-dismiss');
+  const btnTryBoard = document.getElementById('btn-tour-try-board');
+  const btnReopenTour = document.getElementById('btn-reopen-tour');
+  const curriculumSec = document.getElementById('curriculum');
+
+  function openTourPopover() {
+    if (!popoverEl) return;
+    popoverEl.style.display = 'block';
+  }
+
+  function closeTourPopover(markAsSeen) {
+    if (!popoverEl) return;
+    popoverEl.style.display = 'none';
+    if (markAsSeen) {
+      localStorage.setItem(TOUR_STORAGE_KEY, 'true');
+      if (beaconEl) beaconEl.style.display = 'none';
+    }
+  }
+
+  if (localStorage.getItem(TOUR_STORAGE_KEY) === 'true' && beaconEl) {
+    beaconEl.style.display = 'none';
+  }
+
+  if (btnCloseTour) {
+    btnCloseTour.addEventListener('click', () => closeTourPopover(true));
+  }
+  if (btnDismissTour) {
+    btnDismissTour.addEventListener('click', () => closeTourPopover(true));
+  }
+  if (btnReopenTour) {
+    btnReopenTour.addEventListener('click', () => {
+      openTourPopover();
+      if (beaconEl) beaconEl.style.display = 'inline-block';
+    });
+  }
+
+  if (btnTryBoard) {
+    btnTryBoard.addEventListener('click', function() {
+      setViewMode('board');
+      closeTourPopover(true);
+
+      // Animação demonstrativa no primeiro card para indicar o drag & drop
+      setTimeout(() => {
+        const firstCard = document.querySelector('#dropzone-todo .kanban-card');
+        if (firstCard) {
+          firstCard.classList.add('kanban-card-hint');
+          firstCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          setTimeout(() => firstCard.classList.remove('kanban-card-hint'), 2600);
+        } else if (boardEl) {
+          boardEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 120);
+    });
+  }
+
+  // Scroll trigger: detecta aproximação quando o aluno rola o mouse (primeira vez)
+  if (curriculumSec && localStorage.getItem(TOUR_STORAGE_KEY) !== 'true') {
+    let triggered = false;
+
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting && !triggered) {
+            triggered = true;
+            setTimeout(() => {
+              openTourPopover();
+            }, 400);
+            observer.disconnect();
+          }
+        });
+      }, {
+        threshold: 0.12,
+        rootMargin: '0px 0px -60px 0px'
+      });
+      observer.observe(curriculumSec);
+    } else {
+      const onScrollCheck = () => {
+        if (triggered) return;
+        const rect = curriculumSec.getBoundingClientRect();
+        if (rect.top <= window.innerHeight * 0.8) {
+          triggered = true;
+          setTimeout(() => openTourPopover(), 400);
+          window.removeEventListener('scroll', onScrollCheck);
+        }
+      };
+      window.addEventListener('scroll', onScrollCheck, { passive: true });
+    }
+  }
+
+  // Inicializa componentes
+  initKanbanBoard();
+  updateProgressUI();
+
+  // Restaura visualização preferida
+  const savedView = localStorage.getItem(VIEW_STORAGE_KEY) || 'grid';
+  setViewMode(savedView);
+})();
+</script>
+{% endblock %}

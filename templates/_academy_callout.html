@@ -1,0 +1,19 @@
+{# Reusable Academy Callout for Lab Views #}
+{% set current_slug = module or request.blueprint %}
+{% if current_slug %}
+<div class="academy-lab-callout">
+  <div class="callout-left">
+    <div class="callout-kicker">
+      <span class="callout-dot"></span>
+      <span>DUNO ACADEMY • TEORIA, ANATOMIA E DEFESA</span>
+    </div>
+    <div class="callout-text">
+      Entenda por que esta vulnerabilidade acontece, veja o fluxo de execução e aprenda a correção segura deste módulo na Academy.
+    </div>
+  </div>
+  <a href="/academy/{{ current_slug }}" class="btn-callout-academy">
+    <span>LER NA ACADEMY</span>
+    <span class="callout-arrow">→</span>
+  </a>
+</div>
+{% endif %}

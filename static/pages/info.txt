@@ -1,0 +1,5 @@
+DUNO v1.0
+
+Stack: Python 3.11 / Flask 3.x / SQLite
+Porta: 2300
+Módulos: 20 (19 web + 1 API Security)

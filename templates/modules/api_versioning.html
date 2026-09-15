@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}API Versioning{% endblock %}
+
+{% block content %}
+<div class="module-page">
+  <div class="breadcrumb">
+    <a href="{{ url_for('index') }}">Dashboard</a>
+    <span class="breadcrumb-sep">›</span>
+    <span>#18 API Versioning</span>
+  </div>
+
+  <div class="module-header">
+    <div class="module-title-row">
+      <h1 class="module-title">API Versioning</h1>
+      <p class="module-desc">Acesso a dados sensíveis via versão de API obsoleta</p>
+    </div>
+    <div class="module-controls">
+      {% set current_level = level %}
+      {% include '_level_switch.html' with context %}
+      <button class="btn btn-ghost btn-sm" onclick="openSourceModal('api_versioning', '{{ level }}')">
+        &lt;/&gt; View Source
+      </button>
+    </div>
+  </div>
+
+  {% include "_academy_callout.html" with context %}
+
+  <div class="module-body">
+    <div class="panel">
+      <div class="panel-title">Laboratório — <span class="level-badge level-{{ level }}">{{ level }}</span></div>
+      <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:1rem">
+        <strong style="color:var(--text-primary)">Objetivo:</strong>
+        Acesse tokens via <code>v1</code>. Em high, envie header <code>X-API-Version: v1</code>.
+      </p>
+      <form method="GET" action="/api_versioning" id="version-form">
+        <div class="form-group">
+          <label for="version-select">Versão da API</label>
+          <select id="version-select" name="version" class="form-control"
+                  onchange="this.form.submit()">
+            <option value="v1" {% if version == 'v1' %}selected{% endif %}>v1 (legada)</option>
+            <option value="v2" {% if version == 'v2' %}selected{% endif %}>v2 (atual)</option>
+          </select>
+        </div>
+      </form>
+      {% if result %}
+      <div style="margin-top:1rem;overflow-x:auto">
+        <table class="data-table">
+          <thead><tr><th>ID</th><th>User ID</th><th>Token</th><th>Version</th></tr></thead>
+          <tbody>
+            {% for row in result %}
+            <tr>
+              <td>{{ row.get('id','') }}</td>
+              <td>{{ row.get('user_id','') }}</td>
+              <td><code>{{ row.get('token','') }}</code></td>
+              <td><span class="level-badge level-{% if row.get('version') == 'v1' %}low{% else %}high{% endif %}">{{ row.get('version','') }}</span></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Como funciona</div>
+      <div class="alert alert-{% if level == 'impossible' %}success{% elif level == 'high' %}warning{% else %}error{% endif %}">
+        {% if level == 'low' %}Sem filtro — retorna todos os tokens independente de versão{% endif %}
+        {% if level == 'medium' %}Filtra por versão mas v1 ainda acessível pela URL{% endif %}
+        {% if level == 'high' %}Header X-API-Version controla — v1 ainda funcional{% endif %}
+        {% if level == 'impossible' %}v1 desativado, filtra por user da sessão, apenas campos não-sensíveis{% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

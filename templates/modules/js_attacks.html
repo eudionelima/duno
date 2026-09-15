@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}JavaScript Attacks{% endblock %}
+
+{% block content %}
+<div class="module-page">
+  <div class="breadcrumb">
+    <a href="{{ url_for('index') }}">Dashboard</a>
+    <span class="breadcrumb-sep">›</span>
+    <span>#14 JavaScript Attacks</span>
+  </div>
+
+  <div class="module-header">
+    <div class="module-title-row">
+      <h1 class="module-title">JavaScript Attacks</h1>
+      <p class="module-desc">Manipulação de valores client-side</p>
+    </div>
+    <div class="module-controls">
+      {% set current_level = level %}
+      {% include '_level_switch.html' with context %}
+      <button class="btn btn-ghost btn-sm" onclick="openSourceModal('js_attacks', '{{ level }}')">
+        &lt;/&gt; View Source
+      </button>
+    </div>
+  </div>
+
+  {% include "_academy_callout.html" with context %}
+
+  <div class="module-body">
+    <div class="panel">
+      <div class="panel-title">Laboratório — <span class="level-badge level-{{ level }}">{{ level }}</span></div>
+      <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:1rem">
+        <strong style="color:var(--text-primary)">Objetivo:</strong>
+        Compre o produto por R$ 0,01 manipulando o campo de preço. Em low, altere via DevTools.
+      </p>
+      <form method="POST" action="/js_attacks" id="js-form">
+        <div class="form-group">
+          <label for="product">Produto</label>
+          <select id="product" name="product_id" class="form-control">
+            <option value="1">Produto A — R$ 99,90</option>
+            <option value="2">Produto B — R$ 199,90</option>
+            <option value="3">Produto C — R$ 49,90</option>
+          </select>
+        </div>
+        {% if level != 'impossible' %}
+        <div class="form-group">
+          <label for="price">Preço (client-side)</label>
+          <input type="number" id="price" name="price" class="form-control"
+                 placeholder="99.90" step="0.01" min="0" />
+        </div>
+        {% endif %}
+        <button type="submit" class="btn btn-primary">Comprar</button>
+      </form>
+      {% if result %}
+      <div class="result-box {% if 'realizada' in result %}success{% else %}error{% endif %}">{{ result }}</div>
+      {% endif %}
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Como funciona</div>
+      <div class="alert alert-{% if level == 'impossible' %}success{% elif level == 'high' %}warning{% else %}error{% endif %}">
+        {% if level == 'low' %}Preço enviado pelo cliente sem validação — altere para 0.01 no formulário{% endif %}
+        {% if level == 'medium' %}Valida server-side mas aceita float — experimente valores edge case{% endif %}
+        {% if level == 'high' %}Consulta banco por product_id — mas product_id é manipulável{% endif %}
+        {% if level == 'impossible' %}Preço definido exclusivamente no servidor — cliente não controla valor{% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

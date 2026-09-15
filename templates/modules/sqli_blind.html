@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}SQL Injection (Blind){% endblock %}
+
+{% block content %}
+<div class="module-page">
+  <div class="breadcrumb">
+    <a href="{{ url_for('index') }}">Dashboard</a>
+    <span class="breadcrumb-sep">›</span>
+    <span>#8 SQL Injection (Blind)</span>
+  </div>
+
+  <div class="module-header">
+    <div class="module-title-row">
+      <h1 class="module-title">SQL Injection (Blind)</h1>
+      <p class="module-desc">Boolean-based e time-based blind SQL Injection</p>
+    </div>
+    <div class="module-controls">
+      {% set current_level = level %}
+      {% include '_level_switch.html' with context %}
+      <button class="btn btn-ghost btn-sm" onclick="openSourceModal('sqli_blind', '{{ level }}')">
+        &lt;/&gt; View Source
+      </button>
+    </div>
+  </div>
+
+  {% include "_academy_callout.html" with context %}
+
+  <div class="module-body">
+    <div class="panel">
+      <div class="panel-title">Laboratório — <span class="level-badge level-{{ level }}">{{ level }}</span></div>
+      <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:1rem">
+        <strong style="color:var(--text-primary)">Objetivo:</strong>
+        Infira dados via respostas binárias. Tente <code>1 AND 1=1</code> vs <code>1 AND 1=2</code>.
+        Em high, use time-based com <code>1 AND (SELECT COUNT(*) FROM sqlite_master)>0</code>.
+      </p>
+      <form method="POST" action="/sqli_blind" id="blind-form">
+        <div class="form-group">
+          <label for="blind-id">User ID</label>
+          <input type="text" id="blind-id" name="user_id" class="form-control" placeholder="1" />
+        </div>
+        <button type="submit" class="btn btn-primary">Verificar</button>
+      </form>
+      {% if result %}
+      <div class="result-box {% if 'existe' in result %}success{% else %}error{% endif %}">{{ result }}</div>
+      {% endif %}
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Como funciona</div>
+      <div class="alert alert-{% if level == 'impossible' %}success{% elif level == 'high' %}warning{% else %}error{% endif %}">
+        {% if level == 'low' %}Boolean-based — diferença entre true/false permite enumeração{% endif %}
+        {% if level == 'medium' %}Remove aspas — injeção numérica ainda funciona{% endif %}
+        {% if level == 'high' %}Vulnerável a time-based — inferência por tempo de resposta{% endif %}
+        {% if level == 'impossible' %}Prepared statement — injeção impossível{% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

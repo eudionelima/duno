@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Command Injection{% endblock %}
+
+{% block content %}
+<div class="module-page">
+  <div class="breadcrumb">
+    <a href="{{ url_for('index') }}">Dashboard</a>
+    <span class="breadcrumb-sep">›</span>
+    <span>#2 Command Injection</span>
+  </div>
+
+  <div class="module-header">
+    <div class="module-title-row">
+      <h1 class="module-title">Command Injection</h1>
+      <p class="module-desc">Injeção de comandos via entrada controlada</p>
+    </div>
+    <div class="module-controls">
+      {% set current_level = level %}
+      {% include '_level_switch.html' with context %}
+      <button class="btn btn-ghost btn-sm" onclick="openSourceModal('command_injection', '{{ level }}')">
+        &lt;/&gt; View Source
+      </button>
+    </div>
+  </div>
+
+  {% include "_academy_callout.html" with context %}
+
+  <div class="module-body">
+    <div class="panel">
+      <div class="panel-title">Laboratório — <span class="level-badge level-{{ level }}">{{ level }}</span></div>
+      <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:1rem">
+        <strong style="color:var(--text-primary)">Objetivo:</strong>
+        Execute comandos arbitrários. Tente <code>127.0.0.1; id</code> ou <code>127.0.0.1 | cat /etc/passwd</code>
+      </p>
+      <form method="POST" action="/command_injection" id="cmd-form">
+        <div class="form-group">
+          <label for="cmd-input">Comando / Host</label>
+          <input type="text" id="cmd-input" name="cmd" class="form-control" placeholder="127.0.0.1" value="{{ cmd }}" />
+        </div>
+        <button type="submit" class="btn btn-primary">Executar</button>
+      </form>
+      {% if result is not none %}
+      <div class="result-box raw" style="margin-top:1rem"><pre>{{ result }}</pre></div>
+      {% endif %}
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Como funciona</div>
+      <div class="alert alert-{% if level == 'impossible' %}success{% elif level == 'high' %}warning{% else %}error{% endif %}">
+        {% if level == 'low' %}Sem sanitização — <code>shell=True</code> com input direto. Injete com <code>; id</code>{% endif %}
+        {% if level == 'medium' %}Blacklist de <code>; && || ` $ |</code> — bypassável com <code>%0a</code> ou outros separadores{% endif %}
+        {% if level == 'high' %}Regex <code>^[\w.\- ]+$</code> — previne a maioria mas subshells via <code>$(...)</code> podem funcionar{% endif %}
+        {% if level == 'impossible' %}Whitelist de comandos + <code>shlex.split</code> sem <code>shell=True</code> — injeção impossível{% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
